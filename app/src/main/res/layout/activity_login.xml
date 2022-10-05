@@ -34,8 +34,8 @@
         android:contentDescription="@string/agenda_logo_description"
         app:layout_constraintEnd_toStartOf="@+id/img_logoChain"
         app:layout_constraintTop_toTopOf="@+id/img_logoChain"
-        tools:ignore="ImageContrastCheck"
-        tools:srcCompat="@drawable/ic_agenda" />
+        app:srcCompat="@drawable/ic_agenda"
+        tools:ignore="ImageContrastCheck" />
 
     <ImageView
         android:id="@+id/img_logoGoogle"
@@ -45,7 +45,7 @@
         android:contentDescription="@string/google_logo_description"
         app:layout_constraintStart_toEndOf="@+id/img_logoChain"
         app:layout_constraintTop_toTopOf="@+id/img_logoChain"
-        tools:srcCompat="@drawable/ic_google" />
+        app:srcCompat="@drawable/ic_google" />
 
     <ImageView
         android:id="@+id/img_logoChain"
@@ -56,7 +56,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@drawable/img_chain" />
+        app:srcCompat="@drawable/img_chain" />
 
     <Button
         android:id="@+id/btn_login"
@@ -68,15 +68,5 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/img_logoChain" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/spc_lowerHalf"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/spc_lowerHalf"
-        app:layout_constraintTop_toBottomOf="@+id/spc_upperHalf"
-        app:srcCompat="@drawable/common_full_open_on_phone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
