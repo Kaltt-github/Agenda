@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Agenda</string>
+    <string name="login">Conectar con Google</string>
+    <string name="empty"> </string>
+    <string name="agenda_logo_description">logo de la aplicacion Agenda</string>
+    <string name="google_logo_description">logo de la aplicacion Google</string>
+    <string name="description_chains">Cadena de coneccion</string>
+</resources>

@@ -1,0 +1,22 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Agenda" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/lightThemeColorPrimary</item>
+        <item name="colorPrimaryVariant">@color/lightThemeColorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/lightThemeColorOnPrimary</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/lightThemeColorSecondary</item>
+        <item name="colorSecondaryVariant">@color/lightThemeColorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/lightThemeColorOnSecondary</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+        <item name="android:background">@color/lightThemeColorBackground</item>
+        <item name="materialButtonStyle">@style/defaultButton</item>
+    </style>
+    <style name="defaultButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/lightThemeColorPrimaryContainer</item>
+        <item name="android:textColor">@color/lightThemeColorOnPrimaryContainer</item>
+    </style>
+</resources>
