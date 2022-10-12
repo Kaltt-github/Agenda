@@ -12,7 +12,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/spc_lowerHalf"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,37 +26,49 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spc_upperHalf" />
 
-    <ImageView
-        android:id="@+id/img_logoAgenda"
-        android:layout_width="82dp"
-        android:layout_height="82dp"
-        android:layout_marginEnd="16dp"
-        android:contentDescription="@string/agenda_logo_description"
-        app:layout_constraintEnd_toStartOf="@+id/img_logoChain"
-        app:layout_constraintTop_toTopOf="@+id/img_logoChain"
-        app:srcCompat="@drawable/ic_agenda"
-        tools:ignore="ImageContrastCheck" />
-
-    <ImageView
-        android:id="@+id/img_logoGoogle"
-        android:layout_width="82dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="16dp"
-        android:contentDescription="@string/google_logo_description"
-        app:layout_constraintStart_toEndOf="@+id/img_logoChain"
-        app:layout_constraintTop_toTopOf="@+id/img_logoChain"
-        app:srcCompat="@drawable/ic_google" />
-
-    <ImageView
-        android:id="@+id/img_logoChain"
-        android:layout_width="82dp"
-        android:layout_height="82dp"
-        android:contentDescription="@string/description_chains"
+    <androidx.cardview.widget.CardView
+        style="@style/cardPrimaryBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="82dp"
         app:layout_constraintBottom_toTopOf="@+id/btn_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/img_chain" />
+        app:layout_constraintTop_toTopOf="@+id/spc_upperHalf">
+
+        <LinearLayout
+            style="@style/primaryBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp">
+
+            <ImageView
+                android:id="@+id/img_logoAgenda"
+                android:layout_width="82dp"
+                android:layout_height="82dp"
+                android:layout_margin="16dp"
+                android:contentDescription="@string/agenda_logo_description"
+                app:srcCompat="@drawable/ic_agenda"
+                tools:ignore="ImageContrastCheck" />
+
+            <ImageView
+                android:id="@+id/img_logoChain"
+                android:layout_width="82dp"
+                android:layout_height="82dp"
+                android:layout_marginVertical="16dp"
+                android:contentDescription="@string/description_chains"
+                app:layout_constraintBottom_toTopOf="@+id/btn_login"
+                app:srcCompat="@drawable/img_chain" />
+
+            <ImageView
+                android:id="@+id/img_logoGoogle"
+                android:layout_width="82dp"
+                android:layout_height="82dp"
+                android:layout_margin="16dp"
+                android:contentDescription="@string/google_logo_description"
+                app:srcCompat="@drawable/ic_google" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <Button
         android:id="@+id/btn_login"
@@ -66,7 +78,5 @@
         app:layout_constraintBottom_toTopOf="@+id/spc_lowerHalf"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img_logoChain" />
-
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,4 +20,10 @@
         <item name="backgroundTint">@color/nightThemeColorPrimaryContainer</item>
         <item name="android:textColor">@color/nightThemeColorOnPrimaryContainer</item>
     </style>
+    <style name="cardPrimaryBackground">
+        <item name="cardBackgroundColor">@color/nightThemeColorPrimaryContainer</item>
+    </style>
+    <style name="primaryBackground">
+        <item name="background">@color/nightThemeColorPrimaryContainer</item>
+    </style>
 </resources>
