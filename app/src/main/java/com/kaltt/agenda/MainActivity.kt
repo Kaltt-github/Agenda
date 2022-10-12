@@ -3,8 +3,6 @@ package com.kaltt.agenda
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.firebase.auth.FirebaseAuth
 import com.kaltt.agenda.ui.main.MainFragment
 
 class MainActivity : AppCompatActivity() {
@@ -20,10 +18,9 @@ class MainActivity : AppCompatActivity() {
         }
         btn_logout = findViewById(R.id.btn_log_ou)
         btn_logout.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
-            Tools.checkUser(this)
+            MainRepository.signOut(this)
         }
-        Tools.checkUser(this)
+        MainRepository.checkUser(this)
         //var resultados = MainRepository.fetchLocalEvents(this, "ar","es")
     }
 }

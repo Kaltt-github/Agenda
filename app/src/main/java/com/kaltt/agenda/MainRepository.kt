@@ -1,42 +1,32 @@
 package com.kaltt.agenda
 
 import android.app.Activity
-import android.content.Context
-import com.google.firebase.auth.FirebaseAuth
+import android.content.Intent
 import com.google.firebase.auth.FirebaseUser
-import com.kaltt.agenda.apis.LocalEvents
-import com.kaltt.agenda.classes.Event
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.kaltt.agenda.apis.FirebaseAPI
+import com.kaltt.agenda.apis.FirestoreAPI
+import com.kaltt.agenda.apis.dataClasses.DataUser
 
 class MainRepository {
     companion object {
-        // FIREBASE
-        val firebase = FirebaseAuth.getInstance()
-        var user: FirebaseUser? = null
-        fun isLogged(activity: Activity): Boolean {
-            user = firebase.currentUser
-            return user != null
+        // Variables <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        private val firebaseAPI = FirebaseAPI.getInstance()
+        private val firestoreAPI = FirestoreAPI.getInstance()
+        // Functions <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        fun signOut(activity: Activity) {
+            // TODO borrar eventos
+            firebaseAPI.signOut()
+            // TODO borrar user default
+            checkUser(activity)
         }
-
-        // FIRESTORE
-        fun fetchLocalEvents(context: Context, country: String, language: String): ArrayList<Event> {
-            val start = "https://www.googleapis.com/calendar/v3/calendars/"
-            val values = "${language}.${country}%23holiday@group.v.calendar.google.com/"
-            val retrofit = Retrofit.Builder().baseUrl(start+values)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-            val api = retrofit.create(LocalEvents::class.java)
-
-            val result = api.getLocalEvents().execute()
-
-            return if (result.isSuccessful) {
-                result.body()!!
-            } else {
-                ArrayList<Event>()
+        fun setUser(user: FirebaseUser) {
+            firestoreAPI.setUser(DataUser(user.email!!, user.displayName!!))
+        }
+        fun checkUser(activity : Activity) {
+            if(!firebaseAPI.isSigned) {
+                activity.startActivity(Intent(activity, LoginActivity::class.java))
+                activity.finish()
             }
-
         }
     }
 }
