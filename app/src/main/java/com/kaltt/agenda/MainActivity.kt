@@ -3,24 +3,39 @@ package com.kaltt.agenda
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import com.kaltt.agenda.ui.main.MainFragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.kaltt.agenda.ui.main.viewHolders.ListEventAdapter
+import com.kaltt.agenda.classes.Event
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var btn_logout : Button
+    private lateinit var btnSignOut : Button
+
+    private lateinit var rvListEvent : RecyclerView
+    private var events = ArrayList<Event>()
+    private lateinit var adapter : ListEventAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainerView, MainFragment.newInstance())
-                .commitNow()
-        }
-        btn_logout = findViewById(R.id.btn_log_ou)
-        btn_logout.setOnClickListener {
+        MainRepository.checkUser(this)
+
+        btnSignOut = findViewById(R.id.btn_log_ou)
+        btnSignOut.setOnClickListener {
             MainRepository.signOut(this)
         }
-        MainRepository.checkUser(this)
-        //var resultados = MainRepository.fetchLocalEvents(this, "ar","es")
+
+        rvListEvent = findViewById<RecyclerView>(R.id.rv_list_event)
+        //rvListEvent.setHasFixedSize(true)
+        rvListEvent.layoutManager = LinearLayoutManager(this)
+        adapter = ListEventAdapter(events, this)
+        rvListEvent.adapter = adapter
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        events = MainRepository.getUserEvents()
+        adapter.notifyDataSetChanged()
     }
 }

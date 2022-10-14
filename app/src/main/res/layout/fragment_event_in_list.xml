@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="24dp"
+    android:layout_marginVertical="4dp"
+    android:backgroundTint="#00BCD4"
+    android:paddingHorizontal="4dp"
+    android:paddingVertical="4dp"
+    tools:context=".EventInListFragment">
+
+    <TextView
+        android:id="@+id/txt_event_list_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Evento" />
+
+</FrameLayout>

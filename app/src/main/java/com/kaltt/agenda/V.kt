@@ -6,6 +6,7 @@ class V {
     }
 }
 
+// TODO pedir eventos de Calendar (solicitar pais e idioma)
 // TODO animacion de deslizar a los lados
 // TODO implementacion evento pospuesto
 // TODO compartir eventos

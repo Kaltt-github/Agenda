@@ -1,3 +1,5 @@
 package com.kaltt.agenda.classes
 
-class Event(var nombre:String, var apelliso: String) {}
+import java.time.LocalDateTime
+
+data class Event(var name:String, var start: LocalDateTime, var color: Int) {}
