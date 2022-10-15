@@ -7,6 +7,9 @@ import com.kaltt.agenda.apis.FirebaseAPI
 import com.kaltt.agenda.apis.FirestoreAPI
 import com.kaltt.agenda.apis.dataClasses.DataUser
 import com.kaltt.agenda.classes.Event
+import com.kaltt.agenda.classes.EventFather
+import com.kaltt.agenda.classes.EventRepeat
+import com.kaltt.agenda.classes.enums.ScheduleType
 import kotlinx.coroutines.CoroutineScope
 import java.time.LocalDateTime
 
@@ -36,11 +39,11 @@ class MainRepository {
         }
         fun getUserEvents(): ArrayList<Event> {
             var r = ArrayList<Event>()
-            r.add(Event("Prueba 1", LocalDateTime.now(), (Math.random() * 360).toInt()))
-            r.add(Event("Prueba 2", LocalDateTime.now(), (Math.random() * 360).toInt()))
-            r.add(Event("Prueba 3", LocalDateTime.now(), (Math.random() * 360).toInt()))
-            r.add(Event("Prueba 4", LocalDateTime.now(), (Math.random() * 360).toInt()))
-            r.add(Event("Prueba 5", LocalDateTime.now(), (Math.random() * 360).toInt()))
+            var event = EventFather()
+            event.name = "Evento padre"
+            var eventChild = EventRepeat(event, LocalDateTime.now().plusDays(30), false)
+            r.add(event)
+            r.add(eventChild)
             return r
         }
     }

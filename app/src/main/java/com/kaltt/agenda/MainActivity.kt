@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        events = MainRepository.getUserEvents()
-        adapter.notifyDataSetChanged()
+        events.addAll(MainRepository.getUserEvents())
+        //adapter.notifyDataSetChanged()
     }
 }

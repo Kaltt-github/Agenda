@@ -22,7 +22,7 @@
     <style name="cardPrimaryBackground">
         <item name="cardBackgroundColor">@color/lightThemeColorPrimaryContainer</item>
     </style>
-    <style name="primaryBackground">
-        <item name="background">@color/lightThemeColorPrimaryContainer</item>
+    <style name="roundCorner">
+        <item name="cornerRadius">22dp</item>
     </style>
 </resources>
