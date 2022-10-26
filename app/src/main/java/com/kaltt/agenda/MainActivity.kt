@@ -7,8 +7,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kaltt.agenda.ui.main.viewHolders.ListEventAdapter
 import com.kaltt.agenda.classes.Event
+import com.kaltt.agenda.classes.individualTests.FakeEvent
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity() {
+    private val coroutineContext: CoroutineContext = newSingleThreadContext("main")
+    private val scope = CoroutineScope(coroutineContext)
+
     private lateinit var btnSignOut : Button
 
     private lateinit var rvListEvent : RecyclerView
@@ -26,16 +32,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         rvListEvent = findViewById<RecyclerView>(R.id.rv_list_event)
-        //rvListEvent.setHasFixedSize(true)
         rvListEvent.layoutManager = LinearLayoutManager(this)
         adapter = ListEventAdapter(events, this)
         rvListEvent.adapter = adapter
-
     }
-
-    override fun onStart() {
-        super.onStart()
-        events.addAll(MainRepository.getUserEvents())
-        //adapter.notifyDataSetChanged()
-    }
+        override fun onStart() {
+            super.onStart()
+            scope.launch {
+                var all = MainRepository.getAllEvents()
+                events.addAll(all)
+            }
+        }
 }

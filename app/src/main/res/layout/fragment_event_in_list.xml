@@ -66,4 +66,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/iw_event_list_icon"
         app:layout_constraintStart_toStartOf="@+id/txt_event_list_child_type" />
 
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

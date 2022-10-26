@@ -1,76 +1,70 @@
 package com.kaltt.agenda.classes
 
 import com.kaltt.agenda.classes.enums.ScheduleType
+import java.time.LocalDateTime
 
 class Tag(
-    var id: Int = 0,
-    var icon: String = "Calendar",
-    var name: String = "Tag",
-    var description: String = "",
-    var color: Double = 31.0,
-    var priority: Int = 5,
-    var isLazy: Boolean = false,
-    var tasks:  ArrayList<String> = ArrayList(),
-    var location: String = "",
-    var isFullDay: Boolean = false,
-    var end: Difference = Difference(days = 1),
-    var anticipations:  ArrayList<Difference> = ArrayList(),
-    var reminderType: ScheduleType = ScheduleType.DONT,
-    var reminderX: Int = 0,
-    var repeatType: ScheduleType = ScheduleType.DONT,
-    var repeatX: Int = 0,
-    var repeatLimit: Boolean = true,
-    var repeatLimitX: Difference = Difference(years = 5),
-    var posponableLimit: Int = 7
+    var id: Int,
+    val owner: String,
+    var name: String,
+    var description: String,
+    var icon: String,
+    var color: Double,
+    var priority: Int,
+    var isLazy: Boolean,
+    var tasks: ArrayList<String>,
+    var location: String,
+    var isFullDay: Boolean,
+    var length: Difference,
+    var anticipations: ArrayList<Difference>,
+    var pospositionLimit: Int,
+    var reminderType: ScheduleType,
+    var reminderDelay: Int,
+    var repeatType: ScheduleType,
+    var repeatDelay: Int,
+    var repeatLimit: LocalDateTime?
 ) {
     companion object {
-        fun empty(): Tag {
-            return Tag(
-                name = "Default",
-                description = ""
+        fun empty(): Tag = Tag(
+                -1,
+                "",
+                "Default",
+                "Default Tag for events, provided by the app",
+                "Icon",
+                35.0,
+                5,
+                false,
+                ArrayList(),
+                "",
+                true,
+                Difference(days = 1),
+                ArrayList(),
+                1,
+                ScheduleType.DONT,
+                0,
+                ScheduleType.DONT,
+                0,
+                null
             )
-        }
     }
     fun applyOn(e: Event) {
         e.icon = this.icon
         e.color = this.color
         e.priority = this.priority
+        this.tasks.forEach { e.tasks.add(Task(e, it, false)) }
         e.location = this.location
         e.isFullDay = this.isFullDay
-        e.end = this.end.applyOn(e.start)
-        e.posponableLimit = this.posponableLimit
-
-        this.tasks.forEach { e.insertTask(it, -1) }
-        this.anticipations.forEach { e.insertAnticipation(it.applyOn(e.start)) }
-        e.setReminders(this.reminderType, this.reminderX)
-        e.setRepetitions(
-            this.repeatType,
-            this.repeatX,
-            if(this.repeatLimit) this.repeatLimitX.applyOn(e.start) else null
-        )
+        e.end = this.length.applyOn(e.start)
+        this.anticipations.forEach { e.addAnticipation(it) }
+        e.posposition.daysLimit = this.pospositionLimit
+        e.reminder.type = this.reminderType
+        e.reminder.delay = this.reminderDelay
+        e.setRepetitions(this.repeatType, this.repeatDelay, this.repeatLimit)
 
         e.isLazy = this.isLazy
     }
     fun clone(): Tag {
-        return Tag(
-            id = this.id,
-            name = this.name,
-            description = this.description,
-            color = this.color,
-            priority = this.priority,
-            isLazy = this.isLazy,
-            tasks = this.tasks,
-            location = this.location,
-            end = this.end,
-            anticipations = this.anticipations,
-            reminderType = this.repeatType,
-            reminderX = this.reminderX,
-            repeatType = this.repeatType,
-            repeatX = this.repeatX,
-            repeatLimit = this.repeatLimit,
-            repeatLimitX = this.repeatLimitX,
-            posponableLimit = this.posponableLimit
-        )
+        return Tag(this.id, this.owner, this.name, this.description, this.icon, this.color, this.priority, this.isLazy, this.tasks, this.location, this.isFullDay, this.length, this.anticipations, this.pospositionLimit, this.reminderType, this.reminderDelay, this.repeatType, this.repeatDelay, this.repeatLimit)
     }
     fun save(eco: Boolean) {
         if (eco) {

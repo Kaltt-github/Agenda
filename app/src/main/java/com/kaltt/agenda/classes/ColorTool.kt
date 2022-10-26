@@ -1,41 +1,56 @@
 package com.kaltt.agenda.classes
 
-class Color {
+import android.graphics.Color
+
+class ColorTool {
+    private var updatingRGB: Boolean = false
+    private var updatingHSB: Boolean = false
     constructor(rgb: String) {
         this.rgb = rgb
+        updatingHSB = true
+        updateHSB()
+        updatingRGB = true
     }
-
     constructor(h: Double, s: Double, b: Double) {
         this.hsb = arrayListOf(h, s, b)
+        updatingRGB = true
+        updateRGB()
+        updatingHSB = true
     }
 
-    var red = 0.0
+    var red = 1.0
         set(value) {
+            updatingRGB = false
             field = limitHex(value)
             updateHSB()
         }
-    var blue = 0.0
+    var blue = 2.0
         set(value) {
+            updatingRGB = false
             field = limitHex(value)
             updateHSB()
         }
-    var green = 0.0
+    var green = 3.0
         set(value) {
+            updatingRGB = false
             field = limitHex(value)
             updateHSB()
         }
     var hue = 360.0
         set(value) {
+            updatingHSB = false
             field = limitHue(value)
             updateRGB()
         }
     var saturation = 100.0
         set(value) {
+            updatingHSB = false
             field = limitHundred(value)
             updateRGB()
         }
     var bright = 100.0
         set(value) {
+            updatingHSB = false
             field = limitHundred(value)
             updateRGB()
         }
@@ -44,10 +59,10 @@ class Color {
             return "#${toHex(red)}${toHex(green)}${toHex(blue)}"
         }
         set(value) {
-            val s = value.substring(1)
-            this.red = s.substring(0, 1).toInt(16).toDouble()
-            this.green = s.substring(2, 3).toInt(16).toDouble()
-            this.blue = s.substring(4, 5).toInt(16).toDouble()
+            updatingRGB = false
+            this.red = value.substring(1,3).toInt(16).toDouble()
+            this.green = value.substring(3,5).toInt(16).toDouble()
+            this.blue = value.substring(5,7).toInt(16).toDouble()
             updateHSB()
         }
     var hsb: List<Double>
@@ -55,6 +70,7 @@ class Color {
             return listOf(this.hue, this.saturation, this.bright)
         }
         set(value) {
+            updatingHSB = false
             this.hue = value[0]
             this.saturation = value[1]
             this.bright = value[2]
@@ -63,6 +79,9 @@ class Color {
 
     // USAGE
     private fun updateRGB() {
+        if(!updatingRGB) {
+            return
+        }
         val z: Int = Math.floorDiv(this.hue.toInt(), 60)
         val max: String
         val mid: String
@@ -119,8 +138,8 @@ class Color {
                 b = "green"
             }
         }
-        setByWord(max, bright * 255)
-        setByWord(min, (1 - saturation) * getByWord(max))
+        setByWord(max, (bright * 255)/100)
+        setByWord(min, (1 - saturation/100) * getByWord(max))
         x = ((hue / 60 - x) * (getByWord(max) - getByWord(min))).toInt()
         if (a == mid) {
             setByWord(a, getByWord(b) + x)
@@ -130,6 +149,9 @@ class Color {
     }
 
     private fun updateHSB() {
+        if(!updatingHSB) {
+            return
+        }
         val max: String
         val min: String
         if (green > red && green > blue) {
@@ -182,7 +204,7 @@ class Color {
         }
     }
 
-    private fun setByWord(s: String, x: Double): Color {
+    private fun setByWord(s: String, x: Double): ColorTool {
         return when (s) {
             "red" -> {
                 red = x
@@ -239,6 +261,11 @@ class Color {
     }
 
     fun toInt(): Int {
-        return this.rgb.substring(1).toInt(16)
+        var y= FloatArray(3)
+        y[0] = this.hue.toFloat()
+        y[1] = this.saturation.toFloat()
+        y[2] = this.bright.toFloat()
+        var x = Color.HSVToColor(y)
+        return x//this.rgb.substring(1).toInt(16)
     }
 }

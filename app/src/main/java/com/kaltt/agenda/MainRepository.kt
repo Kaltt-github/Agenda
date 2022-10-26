@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.kaltt.agenda.apis.FirebaseAPI
 import com.kaltt.agenda.apis.FirestoreAPI
 import com.kaltt.agenda.apis.dataClasses.DataUser
+import com.kaltt.agenda.classes.Difference
 import com.kaltt.agenda.classes.Event
 import com.kaltt.agenda.classes.EventFather
 import com.kaltt.agenda.classes.EventRepeat
@@ -34,17 +35,24 @@ class MainRepository {
                 activity.finish()
             }
         }
-        fun getUsers() {
+        suspend fun getUsers() {
             firestoreAPI.getUsers()
         }
-        fun getUserEvents(): ArrayList<Event> {
-            var r = ArrayList<Event>()
-            var event = EventFather()
-            event.name = "Evento padre"
-            var eventChild = EventRepeat(event, LocalDateTime.now().plusDays(30), false)
-            r.add(event)
-            r.add(eventChild)
-            return r
+        suspend fun getAllEvents(): ArrayList<Event> {
+            var result = ArrayList<Event>()
+            // Google events
+
+            // User events (father, children, shared)
+            var owned = firestoreAPI.getOwnedEvents(firebaseAPI.email())
+            owned.forEach { result.addAll(it.allEvents()) }
+            //firestoreAPI.getSharedEvents(firebaseAPI.email())
+            for (x in 1..15) {
+                var mock = EventFather("testing@gmail.com")
+                mock.name = "Probando $x"
+                mock.color = (x * 24).toDouble()
+                result.addAll(mock.allEvents())
+            }
+            return result
         }
     }
 }

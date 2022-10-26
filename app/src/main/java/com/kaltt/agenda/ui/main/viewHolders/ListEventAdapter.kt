@@ -1,21 +1,26 @@
 package com.kaltt.agenda.ui.main.viewHolders
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.kaltt.agenda.R
-import com.kaltt.agenda.classes.Color
+import com.kaltt.agenda.classes.ColorTool
 import com.kaltt.agenda.classes.Event
 import com.kaltt.agenda.classes.enums.EventType
 
 class ListEventAdapter(val items: ArrayList<Event>, context: Context)
-    : RecyclerView.Adapter<ListEventAdapter.ListEventViewHolder>() {
-    class ListEventViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    : RecyclerView.Adapter<ListEventAdapter.InListEventViewHolder>() {
+    class InListEventViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val icon: ImageView = view.findViewById(R.id.iw_event_list_icon)
         val childName: TextView = view.findViewById(R.id.txt_event_list_child_name)
         val childType: TextView = view.findViewById(R.id.txt_event_list_child_type)
@@ -23,15 +28,14 @@ class ListEventAdapter(val items: ArrayList<Event>, context: Context)
         val background: ConstraintLayout = view.findViewById(R.id.cl_event_list_background)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListEventViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InListEventViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.fragment_event_in_list, parent, false)
-        return ListEventViewHolder(view)
+        return InListEventViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ListEventViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: InListEventViewHolder, position: Int) {
         var event = items[position]
-        //holder.background.setBackgroundColor(Color(event.color.toDouble(), 81.0, 88.0).toInt())
-        if(event.isFather) {
+        if(event.eventType == EventType.FATHER) {
             if(holder.childName.visibility == View.VISIBLE) {
                 holder.childName.visibility = View.INVISIBLE
                 holder.childType.visibility = View.INVISIBLE
@@ -45,14 +49,18 @@ class ListEventAdapter(val items: ArrayList<Event>, context: Context)
                 holder.fatherName.visibility = View.INVISIBLE
             }
             holder.childName.text = event.name
-            holder.childType.text = when(event.type) {
+            holder.childType.text = when(event.eventType) {
                 EventType.REMINDER -> "Recordatorio"
                 EventType.POSPOSITION -> "Pospuesto"
                 EventType.REPEAT -> "Repeticion"
                 EventType.ANTICIPATION -> "Anticipacion"
-                else -> "???"
+                else -> { "???" }
             }
         }
+        holder.background.background.setColorFilter(
+            Color.parseColor(
+                ColorTool(event.color, 80.0, 85.0).rgb
+            ), PorterDuff.Mode.SRC_ATOP)
     }
 
     override fun getItemCount(): Int {

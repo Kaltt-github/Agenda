@@ -1,7 +1,9 @@
 package com.kaltt.agenda.classes
 
 import com.kaltt.agenda.classes.enums.ScheduleType
+import java.time.Duration
 import java.time.LocalDateTime
+import java.time.Period
 
 class Difference(
     var years: Int = 0,
@@ -14,17 +16,12 @@ class Difference(
         fun between(x: LocalDateTime, y: LocalDateTime): Difference {
             var min = if(x.isBefore(y)) x else y
             var max = if(x.isBefore(y)) y else x
-            max.minusMinutes(min.minute.toLong())
-            max.minusHours(min.hour.toLong())
-            max.minusDays(min.dayOfMonth.toLong())
-            max.minusMonths(min.monthValue.toLong())
-            max.minusYears(min.year.toLong())
             return Difference(
-                years = max.year,
-                months = max.monthValue,
-                days = max.dayOfMonth,
-                hours = max.hour,
-                minutes = max.minute
+                years = max.year - min.year,
+                months = max.monthValue - min.monthValue,
+                days = max.dayOfMonth - min.dayOfMonth,
+                hours = max.hour - min.hour,
+                minutes = max.minute - min.minute
             )
         }
         fun by(type: ScheduleType, delay: Int): Difference{
@@ -41,33 +38,26 @@ class Difference(
             return x
         }
     }
-    fun applyOn(date: LocalDateTime, times: Int = 1): LocalDateTime {
-        var x = date
-        if (this.years > 0) {
-            x.plusYears((this.years * times).toLong())
-        } else if (this.years < 0) {
-            x.minusYears((this.years * times).toLong())
-        }
-        if (this.months > 0) {
-            x.plusMonths((this.months * times).toLong())
-        } else if (this.months < 0) {
-            x.minusMonths((this.months * times).toLong())
-        }
-        if (this.days > 0) {
-            x.plusDays((this.days * times).toLong())
-        } else if (this.days < 0) {
-            x.minusDays((this.days * times).toLong())
-        }
-        if (this.hours > 0) {
-            x.plusHours((this.hours * times).toLong())
-        } else if (this.hours < 0) {
-            x.minusHours((this.hours * times).toLong())
-        }
-        if (this.minutes > 0) {
-            x.plusMinutes((this.minutes * times).toLong())
-        } else if (this.minutes < 0) {
-            x.minusMinutes((this.minutes * times).toLong())
-        }
-        return x
+    fun applyOn(date: LocalDateTime, times: Int = 1): LocalDateTime = date
+        .plusYears((this.years * times).toLong())
+        .plusMonths((this.months * times).toLong())
+        .plusDays((this.days * times).toLong())
+        .plusHours((this.hours * times).toLong())
+        .plusMinutes((this.minutes * times).toLong())
+    fun isEmpty(): Boolean = years == 0 && months == 0 && days == 0 && hours == 0 && minutes == 0
+    fun opposite(): Difference = Difference(
+        years = this.years*-1,
+        months = this.months*-1,
+        days = this.days*-1,
+        hours = this.hours*-1,
+        minutes = this.minutes*-1
+    )
+    fun multiply(n: Int): Difference {
+        this.years *= n
+        this.months *= n
+        this.days *= n
+        this.hours *= n
+        this.minutes *= n
+        return this
     }
 }
