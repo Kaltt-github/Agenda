@@ -43,13 +43,16 @@ class MainRepository {
             // Google events
 
             // User events (father, children, shared)
-            var owned = firestoreAPI.getOwnedEvents(firebaseAPI.email())
-            owned.forEach { result.addAll(it.allEvents()) }
+            //var owned = firestoreAPI.getOwnedEvents(firebaseAPI.email())
+            //owned.forEach { result.addAll(it.allEvents()) }
             //firestoreAPI.getSharedEvents(firebaseAPI.email())
-            for (x in 1..15) {
+            for (x in 1..180) {
                 var mock = EventFather("testing@gmail.com")
                 mock.name = "Probando $x"
-                mock.color = (x * 24).toDouble()
+                mock.color = (x * 2).toDouble()
+                //mock.setRepetitions(ScheduleType.WEEKS, 1, LocalDateTime.now().plusMonths(1))
+                // ver repeticiones con anti,remind,pospo
+                mock.addAnticipation(Difference(days = 1))
                 result.addAll(mock.allEvents())
             }
             return result

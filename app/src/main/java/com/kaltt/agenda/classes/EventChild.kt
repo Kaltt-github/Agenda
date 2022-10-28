@@ -79,6 +79,7 @@ interface EventChild : Event {
     override fun hasRepetitions(): Boolean = this.father.hasRepetitions()
     override fun hasReminders(): Boolean = this.father.hasReminders()
     override fun hasLocation(): Boolean = this.father.hasLocation()
+    override fun hasTasks(): Boolean = this.father.hasTasks()
     override fun hasAnticipations(): Boolean = this.father.hasAnticipations()
     override fun addAnticipation(date: LocalDateTime) = this.father.addAnticipation(date)
     override fun allEvents(): ArrayList<Event> = this.father.allEvents()

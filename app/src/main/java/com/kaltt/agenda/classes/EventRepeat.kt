@@ -35,6 +35,14 @@ class EventRepeat(override var father: Event, val position: Int) : EventChild {
     override var anticipations: ArrayList<EventAnticipation> = ArrayList()
     override var reminder: EventReminder = EventReminder(this)
 
+    override fun addAnticipation(date: LocalDateTime) {
+        addAnticipation(Difference.between(date, this.start).opposite())
+    }
+    override fun addAnticipation(diff: Difference) {
+        EventAnticipation(this, diff)
+        this.anticipations.sortBy { it.start }
+    }
+
     init {
         this.father.anticipations.forEach {
             this.addAnticipation(it.diff)

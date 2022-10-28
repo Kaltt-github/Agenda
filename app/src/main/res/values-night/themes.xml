@@ -10,11 +10,11 @@
         <item name="colorSecondaryVariant">@color/nightThemeColorSecondaryVariant</item>
         <item name="colorOnSecondary">@color/nightThemeColorOnSecondary</item>
         <!-- Status bar color. -->
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/nightThemeColorSurface</item>
         <!-- Customize your theme here. -->
         <item name="android:background">@color/nightThemeColorBackground</item>
         <item name="materialButtonStyle">@style/defaultButton</item>
+        <item name="colorOnPrimarySurface">@color/nightThemeColorSurfaceVariant</item>
     </style>
     <style name="defaultButton" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">@color/nightThemeColorPrimaryContainer</item>
@@ -23,7 +23,7 @@
     <style name="cardPrimaryBackground">
         <item name="cardBackgroundColor">@color/nightThemeColorPrimaryContainer</item>
     </style>
-    <style name="primaryBackground">
-        <item name="background">@color/nightThemeColorPrimaryContainer</item>
+    <style name="surfaceBackground">
+        <item name="backgroundTint">@color/nightThemeColorSurfaceVariant</item>
     </style>
 </resources>

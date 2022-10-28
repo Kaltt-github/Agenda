@@ -47,6 +47,7 @@ interface Event {
 
     fun hasRepetitions(): Boolean = this.repeat()?.type != ScheduleType.DONT
     fun hasReminders(): Boolean = this.reminder.type != ScheduleType.DONT
+    fun hasTasks(): Boolean = this.tasks.size != 0
     fun hasLocation(): Boolean = this.location.isNotBlank()
     fun hasAnticipations(): Boolean = this.anticipations.size != 0
 
