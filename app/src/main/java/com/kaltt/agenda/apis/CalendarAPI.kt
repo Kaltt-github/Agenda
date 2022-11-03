@@ -1,6 +1,6 @@
 package com.kaltt.agenda.apis
 
-import com.kaltt.agenda.classes.Event
+import com.kaltt.agenda.classes.events.Event
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -1,7 +1,7 @@
-package com.kaltt.agenda.classes
+package com.kaltt.agenda.classes.events
 
+import com.kaltt.agenda.classes.Difference
 import com.kaltt.agenda.classes.enums.EventType
-import com.kaltt.agenda.classes.enums.ScheduleType
 import java.time.LocalDateTime
 
 class EventAnticipation(override val father: Event, var diff: Difference) : EventChild {

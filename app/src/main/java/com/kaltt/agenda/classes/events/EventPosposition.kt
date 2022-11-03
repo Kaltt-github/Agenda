@@ -1,5 +1,6 @@
-package com.kaltt.agenda.classes
+package com.kaltt.agenda.classes.events
 
+import com.kaltt.agenda.classes.Difference
 import com.kaltt.agenda.classes.enums.EventType
 import java.time.LocalDateTime
 
@@ -20,7 +21,10 @@ class EventPosposition(override var father: Event) : EventChild {
         get() = this.father.end.plusDays(this.daysLimit.toLong())
         set(value) {}
     fun daysLeft(): Int {
-        return Difference.between(LocalDateTime.now(), Difference(days = daysLimit).applyOn(father.start)).days
+        return Difference.between(
+            LocalDateTime.now(),
+            Difference(days = daysLimit).applyOn(father.start)
+        ).days
     }
     override var isComplete: Boolean
         get() = this.father.isComplete

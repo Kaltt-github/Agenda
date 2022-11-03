@@ -1,5 +1,8 @@
 package com.kaltt.agenda
 
+import com.kaltt.agenda.classes.events.Event
+import com.kaltt.agenda.classes.events.EventFather
+
 class V {
     companion object {
         val successResult = 100

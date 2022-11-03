@@ -1,5 +1,7 @@
-package com.kaltt.agenda.classes
+package com.kaltt.agenda.classes.events
 
+import com.kaltt.agenda.classes.Difference
+import com.kaltt.agenda.classes.Task
 import com.kaltt.agenda.classes.enums.EventType
 import com.kaltt.agenda.classes.enums.ScheduleType
 import java.time.LocalDateTime
@@ -55,7 +57,7 @@ class EventRepeat(override var father: Event, val position: Int) : EventChild {
         }
     }
 
-    override fun allEvents(): ArrayList<Event> {
+    override fun selfWithChildren(): ArrayList<Event> {
         var e = ArrayList<Event>()
         e.add(this)
         if(this.hasAnticipations()) {

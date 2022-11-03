@@ -3,16 +3,18 @@ package com.kaltt.agenda.classes.individualTests
 import com.kaltt.agenda.classes.*
 import com.kaltt.agenda.classes.enums.EventType
 import com.kaltt.agenda.classes.enums.ScheduleType
+import com.kaltt.agenda.classes.events.*
+import com.kaltt.agenda.classes.tags.TagEagle
 import java.time.LocalDateTime
 
-class FakeEvent: Event {
+class FakeEvent() : Event {
     override val owner: String = "Owner"
     override val eventType: EventType = EventType.FATHER
     override val father: Event = this
     override var id: Int = 0
     override var icon: String = "Icono"
     override var name: String = "Nomre"
-    override var tag: Tag = Tag.empty()
+    override var tag: TagEagle = TagEagle.empty()
     override var description: String = "Descripcion"
     override var color: Double = 35.0
     override var priority: Int =5
@@ -24,7 +26,7 @@ class FakeEvent: Event {
     override var start: LocalDateTime = LocalDateTime.now().minusDays(1)
     override var end: LocalDateTime = LocalDateTime.now().plusDays(1)
     override var anticipations: ArrayList<EventAnticipation> = ArrayList()
-
+    override var sharedWith: ArrayList<String> = ArrayList()
     override fun anticipation(): EventAnticipation {
         return super.anticipation()
     }

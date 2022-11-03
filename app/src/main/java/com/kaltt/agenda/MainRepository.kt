@@ -3,22 +3,18 @@ package com.kaltt.agenda
 import android.app.Activity
 import android.content.Intent
 import com.google.firebase.auth.FirebaseUser
+import com.kaltt.agenda.apis.Factory
 import com.kaltt.agenda.apis.FirebaseAPI
 import com.kaltt.agenda.apis.FirestoreAPI
 import com.kaltt.agenda.apis.dataClasses.DataUser
-import com.kaltt.agenda.classes.Difference
-import com.kaltt.agenda.classes.Event
-import com.kaltt.agenda.classes.EventFather
-import com.kaltt.agenda.classes.EventRepeat
-import com.kaltt.agenda.classes.enums.ScheduleType
-import kotlinx.coroutines.CoroutineScope
-import java.time.LocalDateTime
+import com.kaltt.agenda.classes.EventManager
 
 class MainRepository {
     companion object {
         // Variables <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         private val firebaseAPI = FirebaseAPI.getInstance()
         private val firestoreAPI = FirestoreAPI.getInstance()
+        private val eventManager = EventManager.getInstance()
         // Functions <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         fun signOut(activity: Activity) {
             // TODO borrar eventos
@@ -26,6 +22,7 @@ class MainRepository {
             // TODO borrar user default
             checkUser(activity)
         }
+        fun email(): String = firebaseAPI.email()
         fun setUser(user: FirebaseUser) {
             firestoreAPI.setUser(DataUser(user.email!!, user.displayName!!))
         }
@@ -38,24 +35,18 @@ class MainRepository {
         suspend fun getUsers() {
             firestoreAPI.getUsers()
         }
-        suspend fun getAllEvents(): ArrayList<Event> {
-            var result = ArrayList<Event>()
+        suspend fun fetchAllEvents() {
+            // Revisar ultima actualizacion antes de hacer fetch
             // Google events
-
+            // TODO
             // User events (father, children, shared)
-            //var owned = firestoreAPI.getOwnedEvents(firebaseAPI.email())
-            //owned.forEach { result.addAll(it.allEvents()) }
+            firestoreAPI.getOwnedEvents(firebaseAPI.email())
+                .addOnSuccessListener {
+                    eventManager.ownedEvents.clear()
+                    it.documents.forEach { d -> eventManager.ownedEvents.add(Factory.mapToEvent(d.data!!)) }
+                    eventManager.notifyChanges()
+                }
             //firestoreAPI.getSharedEvents(firebaseAPI.email())
-            for (x in 1..180) {
-                var mock = EventFather("testing@gmail.com")
-                mock.name = "Probando $x"
-                mock.color = (x * 2).toDouble()
-                //mock.setRepetitions(ScheduleType.WEEKS, 1, LocalDateTime.now().plusMonths(1))
-                // ver repeticiones con anti,remind,pospo
-                mock.addAnticipation(Difference(days = 1))
-                result.addAll(mock.allEvents())
-            }
-            return result
         }
     }
 }

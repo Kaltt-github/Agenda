@@ -1,6 +1,8 @@
-package com.kaltt.agenda.classes
+package com.kaltt.agenda.classes.events
 
-import com.kaltt.agenda.classes.enums.EventType
+import com.kaltt.agenda.classes.Difference
+import com.kaltt.agenda.classes.tags.TagEagle
+import com.kaltt.agenda.classes.Task
 import com.kaltt.agenda.classes.enums.ScheduleType
 import java.time.LocalDateTime
 
@@ -17,7 +19,7 @@ interface EventChild : Event {
     override var name: String
         get() = this.father.name
         set(value) { this.father.name = value }
-    override var tag: Tag
+    override var tag: TagEagle
         get() = this.father.tag
         set(value) { this.father.tag = value }
     override var description: String
@@ -52,25 +54,28 @@ interface EventChild : Event {
         set(value) { this.father.posposition = value }
     override var repeatType: ScheduleType
         get() = this.father.repeatType
-        set(value) {}
+        set(value) { this.father.repeatType = value }
     override var repeatDelay: Int
         get() = this.father.repeatDelay
-        set(value) {}
+        set(value) { this.father.repeatDelay = value }
     override var repeatLimit: LocalDateTime?
         get() = this.father.repeatLimit
-        set(value) {}
+        set(value) { this.father.repeatLimit = value }
     override var isComplete: Boolean
         get() = this.father.isComplete || this.end.isBefore(this.lastSeen)
         set(value) { this.lastSeen = LocalDateTime.now() }
     override var anticipations: ArrayList<EventAnticipation>
         get() = this.father.anticipations
-        set(value) { this.father.anticipations }
+        set(value) { this.father.anticipations = value }
     override var reminder: EventReminder
         get() = this.father.reminder
-        set(value) { this.father.reminder }
+        set(value) { this.father.reminder = value }
     override var repetitions: ArrayList<EventRepeat>
         get() = this.father.repetitions
-        set(value) { this.father.repetitions }
+        set(value) { this.father.repetitions = value }
+    override var sharedWith: ArrayList<String>
+        get() = this.father.sharedWith
+        set(value) { this.father.sharedWith = value }
     override fun anticipation(): EventAnticipation = this.father.anticipation()
     override fun repeat(): EventRepeat? = this.father.repeat()
     override fun isPosponable(): Boolean = this.father.isPosponable()
@@ -82,6 +87,6 @@ interface EventChild : Event {
     override fun hasTasks(): Boolean = this.father.hasTasks()
     override fun hasAnticipations(): Boolean = this.father.hasAnticipations()
     override fun addAnticipation(date: LocalDateTime) = this.father.addAnticipation(date)
-    override fun allEvents(): ArrayList<Event> = this.father.allEvents()
+    override fun selfWithChildren(): ArrayList<Event> = this.father.selfWithChildren()
     override fun setRepetitions(type: ScheduleType?, delay: Int?, limit: LocalDateTime?) = this.father.setRepetitions(type, delay, limit)
 }

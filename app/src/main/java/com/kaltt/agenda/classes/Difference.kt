@@ -4,6 +4,9 @@ import com.kaltt.agenda.classes.enums.ScheduleType
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.Period
+import java.time.chrono.ChronoLocalDate
+import kotlin.math.abs
+import kotlin.math.floor
 
 class Difference(
     var years: Int = 0,
@@ -14,15 +17,33 @@ class Difference(
 ) {
     companion object {
         fun between(x: LocalDateTime, y: LocalDateTime): Difference {
-            var min = if(x.isBefore(y)) x else y
-            var max = if(x.isBefore(y)) y else x
-            return Difference(
-                years = max.year - min.year,
-                months = max.monthValue - min.monthValue,
-                days = max.dayOfMonth - min.dayOfMonth,
-                hours = max.hour - min.hour,
-                minutes = max.minute - min.minute
+            var mins = (if(x.isBefore(y)) Duration.between(x, y) else Duration.between(y, x)).toMinutes()
+            val sameMonth = x.monthValue == y.monthValue
+            val sameDay = x.dayOfMonth == y.dayOfMonth
+            val sameHour = x.hour == y.hour
+            val sameMinute = x.minute == y.minute
+            val diff = Difference(
+                years = abs(x.year - y.year)
             )
+            mins -= diff.years * 365 * 1440
+            if(!sameMonth) {
+                val n = 1440 * 30.4
+                diff.months = floor(mins / n).toInt()
+                mins -= (diff.months * n).toInt()
+            }
+            if(!sameDay) {
+                val n = 0
+                diff.days = floor(mins / 1440.0).toInt()
+                mins -= diff.days * 1440
+            }
+            if(!sameHour) {
+                diff.hours = floor(mins / 60.0).toInt()
+                mins -= diff.minutes * 60
+            }
+            if(!sameMinute) {
+                diff.minutes = mins.toInt()
+            }
+            return diff
         }
         fun by(type: ScheduleType, delay: Int): Difference{
             var x = Difference()

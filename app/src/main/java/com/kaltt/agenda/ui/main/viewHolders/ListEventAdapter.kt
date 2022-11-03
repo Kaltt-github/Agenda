@@ -3,25 +3,19 @@ package com.kaltt.agenda.ui.main.viewHolders
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.ImageView
-import android.widget.ListView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.graphics.BlendModeColorFilterCompat
-import androidx.core.graphics.BlendModeCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.kaltt.agenda.R
 import com.kaltt.agenda.classes.ColorTool
-import com.kaltt.agenda.classes.Event
+import com.kaltt.agenda.classes.events.Event
 import com.kaltt.agenda.classes.enums.EventType
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 class ListEventAdapter(val items: ArrayList<Event>, context: Context)
     : RecyclerView.Adapter<ListEventAdapter.InListEventViewHolder>() {
@@ -70,7 +64,8 @@ class ListEventAdapter(val items: ArrayList<Event>, context: Context)
                     else -> { "???" }
                 }
             }
-            holder.endText.text = formatDateTime(event.end)
+            holder.endText.text = "${event.start}\n${event.end}"
+                //formatDateTime(event.end)
         }
         fun setTasks() {
             if(event.hasTasks()) {

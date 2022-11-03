@@ -51,4 +51,9 @@ fun main (arguments: Array<String>) {
     println(o.isEmpty())
     println(x.isEmpty())
     println(z.isEmpty())
+    println("apply 1 day")
+    var p = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0))
+    println(p)
+    p = Difference(days = 1).applyOn(p)
+    println(p)
 }

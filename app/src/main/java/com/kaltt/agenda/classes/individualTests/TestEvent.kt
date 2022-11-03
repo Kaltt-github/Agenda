@@ -3,6 +3,8 @@ package com.kaltt.agenda.classes.individualTests
 import com.kaltt.agenda.classes.*
 import com.kaltt.agenda.classes.enums.EventType
 import com.kaltt.agenda.classes.enums.ScheduleType
+import com.kaltt.agenda.classes.events.Event
+import com.kaltt.agenda.classes.events.EventFather
 import java.time.LocalDateTime
 
 class TestEvent {
@@ -57,7 +59,7 @@ fun main (arguments: Array<String>) {
     var q = EventFather("emasileo@gmail.com")
     // FATHER
     println("Evento independiente")
-    q.allEvents().forEach {
+    q.selfWithChildren().forEach {
         show(it)
     }
     // ANTICIPATION
@@ -67,7 +69,7 @@ fun main (arguments: Array<String>) {
     r.addAnticipation(Difference(hours = 1))
     r.addAnticipation(Difference(days = 2))
     r.start = r.start.minusDays(3)
-    r.allEvents().forEach {
+    r.selfWithChildren().forEach {
         show(it)
     }
     // POSPOSITION
@@ -75,7 +77,7 @@ fun main (arguments: Array<String>) {
     var e = EventFather("ema2")
     e.start = e.start.minusDays(2)
     e.posposition.daysLimit = 3
-    e.allEvents().forEach {
+    e.selfWithChildren().forEach {
         show(it)
     }
     // REMINDER
@@ -83,14 +85,14 @@ fun main (arguments: Array<String>) {
     var w = EventFather("ema")
     w.reminder.type = ScheduleType.MINUTES
     w.reminder.delay = 50
-    w.allEvents().forEach {
+    w.selfWithChildren().forEach {
         show(it)
     }
     // REPETITION
     println("EVENTO REPETIDO")
     var t = EventFather("reptition")
     t.setRepetitions(ScheduleType.WEEKS, 1, LocalDateTime.now().plusMonths(1L))
-    t.allEvents().forEach {
+    t.selfWithChildren().forEach {
         show(it)
     }
     println("Hecho")

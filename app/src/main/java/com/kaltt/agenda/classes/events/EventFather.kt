@@ -1,5 +1,8 @@
-package com.kaltt.agenda.classes
+package com.kaltt.agenda.classes.events
 
+import com.kaltt.agenda.classes.Difference
+import com.kaltt.agenda.classes.tags.TagEagle
+import com.kaltt.agenda.classes.Task
 import com.kaltt.agenda.classes.enums.EventType
 import com.kaltt.agenda.classes.enums.ScheduleType
 import java.time.LocalDate
@@ -8,7 +11,7 @@ import java.time.LocalTime
 
 class EventFather(
     override val owner: String,
-    override var tag: Tag = Tag.empty()
+    override var tag: TagEagle = TagEagle.empty()
 ) : Event {
     // VALUES
     override val eventType: EventType = EventType.FATHER
@@ -33,6 +36,7 @@ class EventFather(
     override var repeatLimit: LocalDateTime? = null
     override var reminder: EventReminder = EventReminder(this)
     override var repetitions: ArrayList<EventRepeat> = ArrayList()
+    override var sharedWith: ArrayList<String> = ArrayList()
     override fun isLastRepetition(): Boolean = false
     override fun isLastAnticipation(): Boolean = false
     override fun isLastReminder(): Boolean = false

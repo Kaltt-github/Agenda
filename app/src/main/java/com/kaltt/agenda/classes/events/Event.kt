@@ -1,5 +1,8 @@
-package com.kaltt.agenda.classes
+package com.kaltt.agenda.classes.events
 
+import com.kaltt.agenda.classes.Difference
+import com.kaltt.agenda.classes.tags.TagEagle
+import com.kaltt.agenda.classes.Task
 import com.kaltt.agenda.classes.enums.EventType
 import com.kaltt.agenda.classes.enums.ScheduleType
 import java.time.LocalDateTime
@@ -13,7 +16,7 @@ interface Event {
     var id: Int
     var icon: String
     var name: String
-    var tag: Tag
+    var tag: TagEagle
     var description: String
     var color: Double
     var priority: Int
@@ -33,6 +36,7 @@ interface Event {
     var repeatType: ScheduleType
     var repeatDelay: Int
     var repeatLimit: LocalDateTime?
+    var sharedWith: ArrayList<String>
     fun repeat(): EventRepeat? = this.repetitions.getOrNull(0)
 
     fun isFather(): Boolean = this.eventType == EventType.FATHER
@@ -51,7 +55,7 @@ interface Event {
     fun hasLocation(): Boolean = this.location.isNotBlank()
     fun hasAnticipations(): Boolean = this.anticipations.size != 0
 
-    fun allEvents(): ArrayList<Event> {
+    fun selfWithChildren(): ArrayList<Event> {
         var e = ArrayList<Event>()
         e.add(this)
         if(this.hasAnticipations()) {
@@ -64,7 +68,7 @@ interface Event {
         }
         if(this.hasRepetitions()){
             this.repetitions.forEach {
-                e.addAll(it.allEvents())
+                e.addAll(it.selfWithChildren())
             }
         }
         return e
