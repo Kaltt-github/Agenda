@@ -7,14 +7,12 @@ import com.kaltt.agenda.apis.Factory
 import com.kaltt.agenda.apis.FirebaseAPI
 import com.kaltt.agenda.apis.FirestoreAPI
 import com.kaltt.agenda.apis.dataClasses.DataUser
-import com.kaltt.agenda.classes.EventManager
 
 class MainRepository {
     companion object {
         // Variables <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         private val firebaseAPI = FirebaseAPI.getInstance()
         private val firestoreAPI = FirestoreAPI.getInstance()
-        private val eventManager = EventManager.getInstance()
         // Functions <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         fun signOut(activity: Activity) {
             // TODO borrar eventos
@@ -40,12 +38,7 @@ class MainRepository {
             // Google events
             // TODO
             // User events (father, children, shared)
-            firestoreAPI.getOwnedEvents(firebaseAPI.email())
-                .addOnSuccessListener {
-                    eventManager.ownedEvents.clear()
-                    it.documents.forEach { d -> eventManager.ownedEvents.add(Factory.mapToEvent(d.data!!)) }
-                    eventManager.notifyChanges()
-                }
+            V.ownedEvents = firestoreAPI.getOwnedEvents(firebaseAPI.email())
             //firestoreAPI.getSharedEvents(firebaseAPI.email())
         }
     }
