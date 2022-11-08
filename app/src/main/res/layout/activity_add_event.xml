@@ -78,11 +78,62 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/tag"
+                    app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextEventTag"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:enabled="false"
+                        android:inputType="textShortMessage" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/icon"
+                    app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextEventIcon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:enabled="false"
+                        android:inputType="textShortMessage" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/color"
+                    app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextEventColor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:enabled="false"
+                        android:inputType="textShortMessage" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </TableRow>
         </TableLayout>
     </ScrollView>
 

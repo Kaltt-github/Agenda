@@ -81,4 +81,5 @@ class Difference(
         this.minutes *= n
         return this
     }
+    fun clone(): Difference = Difference(this.years, this.months, this.days, this.hours, this.minutes)
 }

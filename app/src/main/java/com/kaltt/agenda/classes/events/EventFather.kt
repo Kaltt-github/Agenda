@@ -1,19 +1,16 @@
 package com.kaltt.agenda.classes.events
 
-import com.kaltt.agenda.classes.Difference
-import com.kaltt.agenda.classes.tags.TagEagle
-import com.kaltt.agenda.classes.Task
-import com.kaltt.agenda.classes.enums.EventType
-import com.kaltt.agenda.classes.enums.ScheduleType
+import com.kaltt.agenda.classes.*
+import com.kaltt.agenda.classes.enums.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
 class EventFather(
+    override val from: FromType,
     override val owner: String,
-    override var tag: TagEagle = TagEagle.empty()
+    override var tag: Tag = Tag.empty()
 ) : Event {
-    // VALUES
     override val eventType: EventType = EventType.FATHER
     override val father = this
     override var id: Int = -1
@@ -29,24 +26,90 @@ class EventFather(
     private var startDate: LocalDate = LocalDate.now()
     private var startTime: LocalTime = LocalTime.now()
     private var length: Difference = Difference(days = 1)
-    override var posposition = EventPosposition(this)
+
     override var anticipations: ArrayList<EventAnticipation> = ArrayList()
+    override fun addAnticipation(date: LocalDateTime) {
+        addAnticipation(Difference.between(date, this.start).opposite())
+    }
+    override fun addAnticipation(diff: Difference) {
+        this.anticipations.add(EventAnticipation(this, diff))
+        this.anticipations.sortBy { it.start }
+        for ((i, a) in this.anticipations.withIndex()) {
+            a.position = i
+        }
+    }
+
+    override var posposition: EventPosposition = EventPosposition(this)
+    override var pospositionDaysLimit: Int = 0
+    override var posposed: Int = 0
+    override fun pospose(days: Int): Boolean {
+        val new = days + posposed
+        if(new > pospositionDaysLimit) {
+            return false
+        }
+        this.posposed = new
+        return true
+    }
+    override fun posposeDaysLeft(): Int {
+        return Difference.between(this.pospositionDateLimit(), LocalDateTime.now()).days
+    }
+
+    override var reminders: ArrayList<EventReminder> = ArrayList()
+    override var reminderType: ScheduleType = ScheduleType.DONT
+    override var reminderDelay: Int = 0
+    override fun setReminders(type: ScheduleType, delay: Int) {
+        this.reminderType = type
+        this.reminderDelay = delay
+        reminders.clear()
+        var done = type == ScheduleType.DONT || delay == 0
+        val diff = Difference.by(type, delay)
+        var i = 1;
+        while(!done) {
+            val r = EventReminder(this, diff.clone().multiply(i))
+            r.position = i-1
+            if(r.start.isBefore(this.end)) {
+                this.reminders.add(r)
+                i++
+            } else {
+                done = true
+            }
+        }
+    }
+
+    override var repeats: ArrayList<EventRepeat> = ArrayList()
     override var repeatType: ScheduleType = ScheduleType.DONT
     override var repeatDelay: Int = 0
     override var repeatLimit: LocalDateTime? = null
-    override var reminder: EventReminder = EventReminder(this)
-    override var repetitions: ArrayList<EventRepeat> = ArrayList()
+    override fun setRepetitions(type: ScheduleType, delay: Int, limit: LocalDateTime?) {
+        this.repeatType = type
+        this.repeatDelay = delay
+        this.repeatLimit = limit
+        this.repeats.clear()
+        var done = type == ScheduleType.DONT || delay == 0
+        val diff = Difference.by(type, delay)
+        val defaultLimit = LocalDateTime.now().plusYears(10)
+        var i = 1;
+        while(!done) {
+            val r = EventRepeat(this, diff.clone().multiply(i))
+            r.position = i-1
+            if(r.start.isBefore(repeatLimit ?: defaultLimit)) {
+                this.repeats.add(r)
+                i++
+            } else {
+                done = true
+            }
+        }
+    }
+
     override var sharedWith: ArrayList<String> = ArrayList()
-    override fun isLastRepetition(): Boolean = false
-    override fun isLastAnticipation(): Boolean = false
-    override fun isLastReminder(): Boolean = false
-    override fun isLastPosposition(): Boolean = false
+
     override var isLazy: Boolean = false
         set(value) {
             if (value) {
-                this.posposition.daysLimit = 0
+                this.pospositionDaysLimit = 0
                 this.anticipations.clear()
-                this.reminder.type = ScheduleType.DONT
+                this.setReminders(ScheduleType.DONT, 0)
+                this.setRepetitions(ScheduleType.DONT, 0, null)
             }
             field = value
         }
@@ -65,21 +128,22 @@ class EventFather(
         this.tag.applyOn(this)
     }
 
-    override fun setRepetitions(type: ScheduleType?, delay: Int?, limit: LocalDateTime?) {
-        this.repeatType = type ?: this.repeatType
-        this.repeatDelay = delay ?: this.repeatDelay
-        this.repeatLimit = limit ?: this.repeatLimit
-        this.repetitions.clear()
-        if (repeatType == ScheduleType.DONT || repeatDelay == 0) {
-            return
+    override fun selfWithChildren(): ArrayList<Event> {
+        var e = ArrayList<Event>()
+        e.add(this)
+        if(this.hasAnticipations()) {
+            e.addAll(this.anticipations)
         }
-        var difference = Difference.by(repeatType, repeatDelay)
-        var date = difference.applyOn(this.start)
-        var i = 0
-        while(date.isBefore(repeatLimit ?: LocalDateTime.now().plusYears(10))) {
-            this.repetitions.add(EventRepeat(this, i))
-            date = difference.applyOn(date)
-            i++
+        if(this.isExpired() && this.isPosponable()) {
+            e.add(this.posposition)
+        } else if(this.hasReminders()) {
+            e.addAll(this.reminders)
         }
+        if(this.hasRepetitions()){
+            this.repeats.forEach {
+                e.addAll(it.selfWithChildren())
+            }
+        }
+        return e
     }
 }

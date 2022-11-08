@@ -6,55 +6,78 @@ import com.kaltt.agenda.classes.enums.EventType
 import com.kaltt.agenda.classes.enums.ScheduleType
 import java.time.LocalDateTime
 
-class EventRepeat(override var father: Event, val position: Int) : EventChild {
+class EventRepeat(
+    override val father: Event,
+    override var fatherDifference: Difference,
+) : EventChild {
     override val eventType: EventType = EventType.REPEAT
-    override var lastSeen: LocalDateTime = LocalDateTime.MIN
 
-    var type: ScheduleType
-        get() = this.father.repeatType
-        set(value) { this.father.setRepetitions(type = value,null,null) }
-    var delay: Int
-        get() = this.father.repeatDelay
-        set(value) { this.father.setRepetitions(null, delay = value,null) }
-    var limit: LocalDateTime?
-        get() = this.father.repeatLimit
-        set(value) { this.father.setRepetitions(null, null, limit = value) }
-    override var start: LocalDateTime
-        get() = Difference.by(this.type, this.delay).multiply(this.position+1).applyOn(this.father.start)
-        set(value) {}
-    override var end: LocalDateTime
-        get() = Difference.between(this.father.start, this.father.end).applyOn(this.start)
-        set(value) {}
-
-    override fun isLastRepetition(): Boolean = this.father.repetitions.size == this.position+1
-    override fun isLastAnticipation(): Boolean = false
-    override fun isLastReminder(): Boolean = false
-    override fun isLastPosposition(): Boolean = false
+    override var position: Int = -1
+    override var localComplete: Boolean = false
 
     override var tasks: ArrayList<Task> = ArrayList()
-    override var isComplete: Boolean = false
-    override var posposition = EventPosposition(this)
-    override var anticipations: ArrayList<EventAnticipation> = ArrayList()
-    override var reminder: EventReminder = EventReminder(this)
+    override var isComplete: Boolean
+        get() = this.localComplete
+        set(value) { this.localComplete = value }
 
+    override var end: LocalDateTime
+        get() = this.fatherDifference.applyOn(this.father.end)
+        set(value) {}
+
+    override var anticipations: ArrayList<EventAnticipation> = ArrayList()
     override fun addAnticipation(date: LocalDateTime) {
         addAnticipation(Difference.between(date, this.start).opposite())
     }
     override fun addAnticipation(diff: Difference) {
-        EventAnticipation(this, diff)
+        this.anticipations.add(EventAnticipation(this, diff))
         this.anticipations.sortBy { it.start }
+        for ((i, a) in this.anticipations.withIndex()) {
+            a.position = i
+        }
+    }
+
+    override var posposition: EventPosposition = EventPosposition(this)
+    override var posposed: Int = 0
+    override fun pospose(days: Int): Boolean {
+        val new = days + posposed
+        if(new > pospositionDaysLimit) {
+            return false
+        }
+        this.posposed = new
+        return true
+    }
+    override fun posposeDaysLeft(): Int {
+        return Difference.between(this.pospositionDateLimit(), LocalDateTime.now()).days
+    }
+
+    override var reminders: ArrayList<EventReminder> = ArrayList()
+    override fun setReminders(type: ScheduleType, delay: Int) {
+        this.reminderType = type
+        this.reminderDelay = delay
+        reminders.clear()
+        var done = type == ScheduleType.DONT || delay == 0
+        val diff = Difference.by(type, delay)
+        var i = 1;
+        while(!done) {
+            val r = EventReminder(this, diff.clone().multiply(i))
+            r.position = i-1
+            if(r.start.isBefore(this.end)) {
+                this.reminders.add(r)
+                i++
+            } else {
+                done = true
+            }
+        }
     }
 
     init {
-        this.father.anticipations.forEach {
-            this.addAnticipation(it.diff)
-        }
-        this.posposition.daysLimit = this.father.posposition.daysLimit
-        this.reminder.type = this.father.reminder.type
-        this.reminder.delay = this.father.reminder.delay
         this.father.tasks.forEach {
             this.tasks.add(Task(this, it.description, false))
         }
+        this.father.anticipations.forEach {
+            this.addAnticipation(it.fatherDifference)
+        }
+        this.setReminders(this.reminderType, this.reminderDelay)
     }
 
     override fun selfWithChildren(): ArrayList<Event> {
@@ -66,7 +89,7 @@ class EventRepeat(override var father: Event, val position: Int) : EventChild {
         if(this.isExpired() && this.isPosponable()) {
             e.add(this.posposition)
         } else if(this.hasReminders()) {
-            e.add(this.reminder)
+            e.addAll(this.reminders)
         }
         return e
     }

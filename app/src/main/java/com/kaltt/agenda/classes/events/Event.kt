@@ -1,9 +1,10 @@
 package com.kaltt.agenda.classes.events
 
 import com.kaltt.agenda.classes.Difference
-import com.kaltt.agenda.classes.tags.TagEagle
+import com.kaltt.agenda.classes.Tag
 import com.kaltt.agenda.classes.Task
 import com.kaltt.agenda.classes.enums.EventType
+import com.kaltt.agenda.classes.enums.FromType
 import com.kaltt.agenda.classes.enums.ScheduleType
 import java.time.LocalDateTime
 
@@ -12,11 +13,12 @@ interface Event {
     val owner: String
     val eventType: EventType
     val father: Event
+    val from: FromType
     // VALUES
     var id: Int
     var icon: String
     var name: String
-    var tag: TagEagle
+    var tag: Tag
     var description: String
     var color: Double
     var priority: Int
@@ -29,66 +31,49 @@ interface Event {
     var end: LocalDateTime
 
     var anticipations: ArrayList<EventAnticipation>
-    fun anticipation(): EventAnticipation = this.anticipations[0]
+    fun addAnticipation(date: LocalDateTime)
+    fun addAnticipation(diff: Difference)
+
     var posposition: EventPosposition
-    var reminder: EventReminder
-    var repetitions: ArrayList<EventRepeat>
+    var pospositionDaysLimit: Int
+    var posposed: Int
+    fun pospositionDateLimit() = Difference(days = this.pospositionDaysLimit).applyOn(this.start)
+    fun pospose(days: Int): Boolean
+    fun posposeDaysLeft(): Int
+
+    var reminders: ArrayList<EventReminder>
+    var reminderType: ScheduleType
+    var reminderDelay: Int
+    fun setReminders(type: ScheduleType = this.reminderType, delay: Int = this.reminderDelay)
+
+    var repeats: ArrayList<EventRepeat>
     var repeatType: ScheduleType
     var repeatDelay: Int
     var repeatLimit: LocalDateTime?
+    fun setRepetitions(type: ScheduleType, delay: Int, limit: LocalDateTime?)
+
     var sharedWith: ArrayList<String>
-    fun repeat(): EventRepeat? = this.repetitions.getOrNull(0)
 
     fun isFather(): Boolean = this.eventType == EventType.FATHER
     fun isRepeat(): Boolean = this.eventType == EventType.REPEAT
     fun isPosposition(): Boolean = this.eventType == EventType.POSPOSITION
     fun isAnticipation(): Boolean = this.eventType == EventType.ANTICIPATION
     fun isReminder(): Boolean = this.eventType == EventType.REMINDER
-    fun isPosponable(): Boolean = this.posposition.daysLimit != 0
 
     fun isExpired(): Boolean = this.end.isBefore(LocalDateTime.now()) && !this.isComplete
     fun isActive(): Boolean = (this.start.isBefore(LocalDateTime.now()) || this.start.isEqual(LocalDateTime.now())) && (this.end.isAfter(LocalDateTime.now()) || this.end.isEqual(LocalDateTime.now()))
 
-    fun hasRepetitions(): Boolean = this.repeat()?.type != ScheduleType.DONT
-    fun hasReminders(): Boolean = this.reminder.type != ScheduleType.DONT
+    fun isPosponable(): Boolean = this.pospositionDaysLimit != 0
+    fun hasRepetitions(): Boolean = this.repeatType != ScheduleType.DONT || this.repeatDelay != 0
+    fun hasReminders(): Boolean = this.reminderType != ScheduleType.DONT || this.reminderDelay != 0
     fun hasTasks(): Boolean = this.tasks.size != 0
     fun hasLocation(): Boolean = this.location.isNotBlank()
     fun hasAnticipations(): Boolean = this.anticipations.size != 0
 
-    fun selfWithChildren(): ArrayList<Event> {
-        var e = ArrayList<Event>()
-        e.add(this)
-        if(this.hasAnticipations()) {
-            e.addAll(this.anticipations)
-        }
-        if(this.isExpired() && this.isPosponable()) {
-            e.add(this.posposition)
-        } else if(this.hasReminders()) {
-            e.add(this.reminder)
-        }
-        if(this.hasRepetitions()){
-            this.repetitions.forEach {
-                e.addAll(it.selfWithChildren())
-            }
-        }
-        return e
-    }
+    fun selfWithChildren(): ArrayList<Event>
 
-    fun addAnticipation(date: LocalDateTime) {
-        addAnticipation(Difference.between(date, this.start).opposite())
-    }
-    fun addAnticipation(diff: Difference) {
-        EventAnticipation(this, diff)
-        this.anticipations.sortBy { it.start }
-    }
-    fun setRepetitions(type: ScheduleType?, delay: Int?, limit: LocalDateTime?)
-
-    fun isLastRepetition(): Boolean
-    fun isLastAnticipation(): Boolean
-    fun isLastReminder(): Boolean
-    fun isLastPosposition(): Boolean
-
-    fun pospone(days: Int) {
-        this.posposition.lastSeen = this.posposition.lastSeen.plusDays(days.toLong())
-    }
+    fun isLastRepetition(): Boolean = false
+    fun isLastAnticipation(): Boolean = false
+    fun isLastReminder(): Boolean = false
+    fun isLastPosposition(): Boolean = false
 }

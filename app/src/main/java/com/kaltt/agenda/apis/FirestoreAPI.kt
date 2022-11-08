@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.kaltt.agenda.apis.dataClasses.DataUser
+import com.kaltt.agenda.classes.enums.FromType
 import com.kaltt.agenda.classes.events.EventFather
 import kotlinx.coroutines.tasks.await
 
@@ -35,16 +36,13 @@ class FirestoreAPI private constructor() {
         return r
     }
     suspend fun getOwnedEvents(email: String): ArrayList<EventFather> {
-        var result = ArrayList<EventFather>()
-        var qs = fsAPI.collection("events").whereEqualTo("owner",email).get().await()
-        var x = qs.documents
-            .map { d -> d.data }
-            .forEach { e ->
-                var x = EventFather("${e?.get("owner")}")
-                x.name = e?.get("name") as String
-                result.add(x)
-            }
-        return result
+        return Factory.mapsToEvents(
+            FromType.OWNED,
+            fsAPI.collection("events")
+            .whereEqualTo("owner",email)
+            .get().await()
+            .documents.map { it.data }
+        )
     }
 
     suspend fun getSharedEvents(email: String): ArrayList<EventFather> {

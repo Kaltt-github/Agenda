@@ -1,15 +1,14 @@
-package com.kaltt.agenda.classes.tags
+package com.kaltt.agenda.classes
 
-import com.kaltt.agenda.classes.Difference
-import com.kaltt.agenda.classes.Task
+import com.kaltt.agenda.classes.enums.FromType
 import com.kaltt.agenda.classes.enums.ScheduleType
-import com.kaltt.agenda.classes.enums.TagType
 import com.kaltt.agenda.classes.events.Event
 import java.time.LocalDateTime
 
-open class TagEagle(
-    override var id: Int,
-    override var name: String,
+class Tag(
+    val from: FromType,
+    var id: Int,
+    var name: String,
     val owner: String,
     var description: String,
     var icon: String,
@@ -28,14 +27,14 @@ open class TagEagle(
     var repeatDelay: Int,
     var repeatLimit: LocalDateTime?,
     var sharedWith: ArrayList<String>
-) : Tag {
-    override val type: TagType = TagType.EAGLE
+){
     companion object {
-        fun empty(): TagEagle = TagEagle(
+        fun empty(): Tag = Tag(
+                FromType.APP,
                 -1,
-                "",
                 "Default",
-                "Default Tag for events, provided by the app",
+                "App",
+                "Default tag for events, provided by the app",
                 "Icon",
                 35.0,
                 5,
@@ -63,23 +62,14 @@ open class TagEagle(
         e.isFullDay = this.isFullDay
         e.end = this.length.applyOn(e.start)
         this.anticipations.forEach { e.addAnticipation(it) }
-        e.posposition.daysLimit = this.pospositionLimit
-        e.reminder.type = this.reminderType
-        e.reminder.delay = this.reminderDelay
+        e.pospositionDaysLimit = this.pospositionLimit
+        e.setReminders(this.reminderType, this.reminderDelay)
         e.setRepetitions(this.repeatType, this.repeatDelay, this.repeatLimit)
         e.sharedWith.addAll(this.sharedWith)
+        e.sharedWith.distinct()
         e.isLazy = this.isLazy
     }
-    fun clone(): TagEagle {
-        return TagEagle(this.id, this.owner, this.name, this.description, this.icon, this.color, this.priority, this.isLazy, this.tasks, this.location, this.isFullDay, this.length, this.anticipations, this.pospositionLimit, this.reminderType, this.reminderDelay, this.repeatType, this.repeatDelay, this.repeatLimit, this.sharedWith)
-    }
-    fun save(eco: Boolean) {
-        if (eco) {
-            // TODO edit other events
-        }
-        // TODO
-    }
-    fun load() {
-        // TODO
+    fun clone(): Tag {
+        return Tag(this.from, this.id, this.owner, this.name, this.description, this.icon, this.color, this.priority, this.isLazy, this.tasks, this.location, this.isFullDay, this.length, this.anticipations, this.pospositionLimit, this.reminderType, this.reminderDelay, this.repeatType, this.repeatDelay, this.repeatLimit, this.sharedWith)
     }
 }
