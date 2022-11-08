@@ -35,12 +35,8 @@ class ListEventAdapter(val items: ArrayList<Event>, context: Context)
 
     override fun onBindViewHolder(holder: InListEventViewHolder, position: Int) {
         var event = items[position]
-        fun formatDateTime(date: LocalDateTime): String {
-            var hour = date.hour.toString()
-            var minute = date.minute.toString()
-            var time = "${"0".repeat(2-hour.length)}${hour}:${"0".repeat(2 - minute.length)}${minute}hs"
-            return (if(LocalDate.now().isEqual(date.toLocalDate())) "Hoy" else "${date.dayOfMonth}/${date.monthValue+1}/${date.year}") + "\n${time}"
-        }
+        fun twoDigits(n: Int): String = "0".repeat(2 - "$n".length)+"$n"
+        fun formatDateTime(start: LocalDateTime, end: LocalDateTime): String = "${twoDigits(start.monthValue+1)}/${twoDigits(start.dayOfMonth)} ${twoDigits(start.hour)}:${twoDigits(start.minute)}\n${twoDigits(end.monthValue+1)}/${twoDigits(end.dayOfMonth)} ${twoDigits(end.hour)}:${twoDigits(end.minute)}"
         fun setHeader() {
             if(event.eventType == EventType.FATHER) {
                 if(holder.childName.visibility == View.VISIBLE) {
@@ -64,8 +60,7 @@ class ListEventAdapter(val items: ArrayList<Event>, context: Context)
                     else -> { "???" }
                 }
             }
-            holder.endText.text = "${event.start}\n${event.end}"
-                //formatDateTime(event.end)
+            holder.endText.text = formatDateTime(event.start, event.end)
         }
         fun setTasks() {
             if(event.hasTasks()) {

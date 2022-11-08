@@ -13,7 +13,7 @@ class EventFather(
 ) : Event {
     override val eventType: EventType = EventType.FATHER
     override val father = this
-    override var id: Int = -1
+    override var id: String = ""
     override var icon: String = "" 
     override var name: String = "New"
     override var description: String = ""

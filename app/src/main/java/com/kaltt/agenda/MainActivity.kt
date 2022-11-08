@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.kaltt.agenda.apis.FirebaseAPI
+import com.kaltt.agenda.classes.Difference
 import com.kaltt.agenda.classes.enums.FromType
+import com.kaltt.agenda.classes.enums.ScheduleType
 import com.kaltt.agenda.classes.events.EventFather
 import com.kaltt.agenda.ui.main.viewHolders.ListEventAdapter
 import kotlinx.coroutines.*
@@ -41,12 +44,6 @@ class MainActivity : AppCompatActivity() {
         rvListEvent.layoutManager = LinearLayoutManager(this)
         adapter = ListEventAdapter(V.allEvents, this)
         rvListEvent.adapter = adapter
-
-        val big = EventFather(FromType.APP,"emanuel.sileo.2001@gmail.com")
-        val t = LocalTime.now()
-        big.name = "Evento ${t.minute}:${t.second}"
-        big.start = big.start.minusDays(1)
-        V.ownedEvents.add(big)
     }
         override fun onStart() {
             super.onStart()

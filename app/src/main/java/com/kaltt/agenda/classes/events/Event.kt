@@ -1,6 +1,7 @@
 package com.kaltt.agenda.classes.events
 
 import com.kaltt.agenda.classes.Difference
+import com.kaltt.agenda.classes.Persistent
 import com.kaltt.agenda.classes.Tag
 import com.kaltt.agenda.classes.Task
 import com.kaltt.agenda.classes.enums.EventType
@@ -8,14 +9,13 @@ import com.kaltt.agenda.classes.enums.FromType
 import com.kaltt.agenda.classes.enums.ScheduleType
 import java.time.LocalDateTime
 
-interface Event {
+interface Event: Persistent {
     // CONFIG
     val owner: String
     val eventType: EventType
     val father: Event
     val from: FromType
     // VALUES
-    var id: Int
     var icon: String
     var name: String
     var tag: Tag

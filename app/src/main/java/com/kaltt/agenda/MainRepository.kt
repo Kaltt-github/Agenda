@@ -7,6 +7,8 @@ import com.kaltt.agenda.apis.Factory
 import com.kaltt.agenda.apis.FirebaseAPI
 import com.kaltt.agenda.apis.FirestoreAPI
 import com.kaltt.agenda.apis.dataClasses.DataUser
+import com.kaltt.agenda.classes.Persistent
+import com.kaltt.agenda.classes.events.EventFather
 
 class MainRepository {
     companion object {
@@ -40,6 +42,12 @@ class MainRepository {
             // User events (father, children, shared)
             V.ownedEvents = firestoreAPI.getOwnedEvents(firebaseAPI.email())
             //firestoreAPI.getSharedEvents(firebaseAPI.email())
+        }
+        suspend fun saveEvent(e: EventFather) {
+            if(e.id.isBlank()) {
+                e.id = firestoreAPI.save("events", Factory.eventToMap(e))
+            }
+            firestoreAPI.update("events", e.id, Factory.eventToMap(e))
         }
     }
 }

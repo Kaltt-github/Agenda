@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 
 class Tag(
     val from: FromType,
-    var id: Int,
+    override var id: String,
     var name: String,
     val owner: String,
     var description: String,
@@ -27,11 +27,11 @@ class Tag(
     var repeatDelay: Int,
     var repeatLimit: LocalDateTime?,
     var sharedWith: ArrayList<String>
-){
+): Persistent {
     companion object {
         fun empty(): Tag = Tag(
                 FromType.APP,
-                -1,
+                "",
                 "Default",
                 "App",
                 "Default tag for events, provided by the app",

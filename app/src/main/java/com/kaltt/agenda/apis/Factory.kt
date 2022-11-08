@@ -59,11 +59,11 @@ class Factory {
             val e = EventFather(from, map["owner"]!! as String)
             e.name = map["name"]!! as String
             e.description = map["description"]!! as String
-            e.tag = V.allTags.find { it.id == map["tag"]!! as Int }!!
-            e.id = map["id"]!! as Int
+            e.tag = V.allTags.find { it.id == map["tag"]!! as String } ?: Tag.empty()
+            e.id = map["id"]!! as String
             e.icon = map["icon"]!! as String
-            e.color = map["color"]!! as Double
-            e.priority = map["priority"]!! as Int
+            e.color = (map["color"]!! as Long).toDouble()
+            e.priority = (map["priority"]!! as Long).toInt()
             e.tasks.clear()
             val tasks = map["tasks"]!! as ArrayList<Map<String, Any>>
             tasks.forEach {
@@ -79,54 +79,54 @@ class Factory {
             e.location = map["location"]!! as String
             e.isComplete = map["isComplete"]!! as Boolean
             e.isFullDay = map["isFullDay"]!! as Boolean
-            val start = map["start"]!! as Map<String, Int>
+            val start = map["start"]!! as Map<String, Long>
             e.start = LocalDateTime.of(
-                start["year"]!!,
-                start["month"]!!,
-                start["day"]!!,
-                start["hour"]!!,
-                start["minute"]!!
+                start["year"]!!.toInt(),
+                start["month"]!!.toInt(),
+                start["day"]!!.toInt(),
+                start["hour"]!!.toInt(),
+                start["minute"]!!.toInt()
             )
-            val end = map["end"]!! as Map<String, Int>
+            val end = map["end"]!! as Map<String, Long>
             e.end = LocalDateTime.of(
-                end["year"]!!,
-                end["month"]!!,
-                end["day"]!!,
-                end["hour"]!!,
-                end["minute"]!!
+                end["year"]!!.toInt(),
+                end["month"]!!.toInt(),
+                end["day"]!!.toInt(),
+                end["hour"]!!.toInt(),
+                end["minute"]!!.toInt()
             )
-            val anticipations = map["anticipations"] as ArrayList<Map<String, Int>>
+            val anticipations = map["anticipations"] as ArrayList<Map<String, Long>>
             anticipations.forEach {
                 e.addAnticipation(
                     Difference(
-                        it["year"]!!,
-                        it["month"]!!,
-                        it["day"]!!,
-                        it["hour"]!!,
-                        it["minute"]!!
+                        it["year"]!!.toInt(),
+                        it["month"]!!.toInt(),
+                        it["day"]!!.toInt(),
+                        it["hour"]!!.toInt(),
+                        it["minute"]!!.toInt()
                     )
                 )
             }
-            e.pospositionDaysLimit = map["pospositionDaysLimit"]!! as Int
-            e.posposed = map["posposed"] as Int
+            e.pospositionDaysLimit = (map["pospositionDaysLimit"]!! as Long).toInt()
+            e.posposed = (map["posposed"] as Long).toInt()
             e.setReminders(
                 stringToEnumSchedule(map["reminderType"]!! as String),
-                map["reminderDelay"]!! as Int
+                (map["reminderDelay"]!! as Long).toInt()
             )
-            val repeatLimit: Map<String, Int>? = map["repeatLimit"] as Map<String, Int>
+            val repeatLimit = map["repeatLimit"] as Map<String, Long>
             var limitDate: LocalDateTime? = null
-            if(repeatLimit != null) {
+            if(repeatLimit["empty"]!! != 1L) {
                 limitDate = LocalDateTime.of(
-                    repeatLimit["year"]!!,
-                    repeatLimit["month"]!!,
-                    repeatLimit["day"]!!,
-                    repeatLimit["hour"]!!,
-                    repeatLimit["minute"]!!
+                    repeatLimit["year"]!!.toInt(),
+                    repeatLimit["month"]!!.toInt(),
+                    repeatLimit["day"]!!.toInt(),
+                    repeatLimit["hour"]!!.toInt(),
+                    repeatLimit["minute"]!!.toInt()
                 )
             }
             e.setRepetitions(
                 stringToEnumSchedule(map["repeatType"]!! as String),
-                map["repeatDelay"]!! as Int,
+                (map["repeatDelay"]!! as Long).toInt(),
                 limitDate
             )
             e.sharedWith.clear()
@@ -142,65 +142,67 @@ class Factory {
         }
 
         fun eventToMap(e: EventFather): Map<String, Any> {
-            val result = HashMap<String, Any>()
-            result["id"] = e.id
-            result["name"] = e.name
-            result["description"] = e.description
-            result["tag"] = e.tag.id
-            result["icon"] = e.icon
-            result["color"] = e.color
-            result["priority"] = e.priority
-            val tasks = ArrayList<Map<String, Any>>()
-            e.tasks.forEach {
-                val task = HashMap<String, Any>()
-                task["description"] = it.description
-                task["isDone"] = it.isDone
-                tasks.add(task)
-            }
-            result["tasks"] = tasks
-            result["location"] = e.location
-            result["isComplete"] = e.isComplete
-            result["isFullDay"] = e.isFullDay
-            val start = HashMap<String, Int>()
-            start["year"] = e.start.year
-            start["month"] = e.start.monthValue+1
-            start["day"] = e.start.dayOfMonth
-            start["hour"] = e.start.hour
-            start["minute"] = e.start.minute
-            result["start"] = start
-            val end = HashMap<String, Int>()
-            end["year"] = e.end.year
-            end["month"] = e.end.monthValue+1
-            end["day"] = e.end.dayOfMonth
-            end["hour"] = e.end.hour
-            end["minute"] = e.end.minute
-            result["end"] = end
-            val anticipations = ArrayList<Map<String,Int>>()
-            e.anticipations.forEach {
-                val a = HashMap<String, Int>()
-                a["year"] = it.fatherDifference.years
-                a["month"] = it.fatherDifference.months
-                a["day"] = it.fatherDifference.days
-                a["hour"] = it.fatherDifference.hours
-                a["minute"] = it.fatherDifference.minutes
-            }
-            result["pospositionDaysLimit"] = e.pospositionDaysLimit
-            result["posposed"] = e.posposed
-            result["reminderType"] = e.reminderType
-            result["reminderDelay"] = e.reminderDelay
-            result["repeatType"] = enumToString(e.repeatType)
-            result["repeatDelay"] = e.repeatDelay
-            if(e.repeatLimit != null) {
-                val limit = HashMap<String, Int>()
-                limit["year"] = e.repeatLimit!!.year
-                limit["month"] = e.repeatLimit!!.monthValue+1
-                limit["day"] = e.repeatLimit!!.dayOfMonth
-                limit["hour"] = e.repeatLimit!!.hour
-                limit["minute"] = e.repeatLimit!!.minute
-                result["repeatLimit"] = limit
-            }
-            result["sharedWith"] = e.sharedWith
-            return result
+            return hashMapOf(
+                "owner" to e.owner,
+                "id" to e.id,
+                "name" to e.name,
+                "description" to e.description,
+                "tag" to e.tag.id,
+                "icon" to e.icon,
+                "color" to e.color,
+                "priority" to e.priority,
+                "isLazy" to e.isLazy,
+                "tasks" to e.tasks.map {
+                    hashMapOf(
+                        "description" to it.description,
+                        "isDone" to it.isDone
+                    )
+                },
+                "location" to e.location,
+                "isComplete" to e.isComplete,
+                "isFullDay" to e.isFullDay,
+                "start" to hashMapOf(
+                    "year" to e.start.year,
+                    "month" to e.start.monthValue+1,
+                    "day" to e.start.dayOfMonth,
+                    "hour" to e.start.hour,
+                    "minute" to e.start.minute
+                ),
+                "end" to hashMapOf(
+                    "year" to e.end.year,
+                    "month" to e.end.monthValue+1,
+                    "day" to e.end.dayOfMonth,
+                    "hour" to e.end.hour,
+                    "minute" to e.end.minute,
+                ),
+                "anticipations" to e.anticipations.map {
+                    hashMapOf(
+                        "year" to it.fatherDifference.years,
+                        "month" to it.fatherDifference.months,
+                        "day" to it.fatherDifference.days,
+                        "hour" to it.fatherDifference.hours,
+                        "minute" to it.fatherDifference.minutes,
+                        "isDone" to it.localComplete
+                    )
+                },
+                "pospositionDaysLimit" to e.pospositionDaysLimit,
+                "posposed" to e.posposed,
+                "reminderType" to e.reminderType,
+                "reminderDelay" to e.reminderDelay,
+                "repeatType" to enumToString(e.repeatType),
+                "repeatDelay" to e.repeatDelay,
+                "repeatLimit" to if(e.repeatLimit != null) {
+                    hashMapOf(
+                        "year" to e.repeatLimit!!.year,
+                        "month" to e.repeatLimit!!.monthValue+1,
+                        "day" to e.repeatLimit!!.dayOfMonth,
+                        "hour" to e.repeatLimit!!.hour,
+                        "minute" to e.repeatLimit!!.minute,
+                        "empty" to 0
+                    )
+                } else { hashMapOf( "empty" to 1) },
+                "sharedWith" to e.sharedWith
+            )
         }
         fun eventsToMaps(es: ArrayList<EventFather>): ArrayList<Map<String, Any>> {
             val result = ArrayList<Map<String, Any>>()

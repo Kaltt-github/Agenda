@@ -25,7 +25,7 @@ interface EventChild : Event {
 
     override val from: FromType
         get() = this.father.from
-    override var id: Int
+    override var id: String
         get() = this.father.id
         set(value) { this.father.id = value }
     override val owner: String

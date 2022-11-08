@@ -48,4 +48,12 @@ class FirestoreAPI private constructor() {
     suspend fun getSharedEvents(email: String): ArrayList<EventFather> {
         return ArrayList()
     }
+
+    suspend fun save(s: String, x: Map<String, Any>): String {
+        return fsAPI.collection(s).add(x).await().id
+    }
+
+    fun update(s: String, id: String, x: Map<String, Any>) {
+        fsAPI.collection(s).document(id).set(x)
+    }
 }

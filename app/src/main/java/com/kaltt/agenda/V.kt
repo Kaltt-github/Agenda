@@ -41,4 +41,6 @@ class V {
 // TODO tutorial para usuarios nuevos/opcion en ... para volver a ver
 // TODO que las actualzaciones de Father actualicen Repeat
 // TODO los tags se actualizan y actualiza los eventos
+// TODO conservar los completed de reminder y repeat al hacer cambios
+// TODO conservar los completed de reminder y repeat en base de datos
 
