@@ -3,8 +3,6 @@ package com.kaltt.agenda.classes
 import com.kaltt.agenda.classes.enums.ScheduleType
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.Period
-import java.time.chrono.ChronoLocalDate
 import kotlin.math.abs
 import kotlin.math.floor
 

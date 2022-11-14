@@ -2,7 +2,8 @@ package com.kaltt.agenda.classes.events
 
 import com.kaltt.agenda.classes.Difference
 import com.kaltt.agenda.classes.enums.EventType
-import com.kaltt.agenda.classes.enums.ScheduleType
+import com.kaltt.agenda.classes.interfaces.Event
+import com.kaltt.agenda.classes.interfaces.EventChild
 import java.time.LocalDateTime
 
 class EventReminder(

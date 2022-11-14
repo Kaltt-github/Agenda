@@ -6,7 +6,7 @@ import android.widget.Button
 import com.kaltt.agenda.classes.enums.FromType
 import com.kaltt.agenda.classes.events.EventFather
 
-class AddEventActivity() : AppCompatActivity() {
+class AddEventActivity : AppCompatActivity() {
     private lateinit var event: EventFather
 
     private lateinit var btnAdd: Button
@@ -22,7 +22,7 @@ class AddEventActivity() : AppCompatActivity() {
     }
     override fun onStart() {
         super.onStart()
-        event = EventFather(FromType.APP, MainRepository.email())
+        event = EventFather(FromType.APP, MainRepository.email)
         // TODO Assign values to visual screen
     }
 }

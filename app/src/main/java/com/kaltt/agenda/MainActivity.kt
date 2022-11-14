@@ -6,14 +6,8 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kaltt.agenda.apis.FirebaseAPI
-import com.kaltt.agenda.classes.Difference
-import com.kaltt.agenda.classes.enums.FromType
-import com.kaltt.agenda.classes.enums.ScheduleType
-import com.kaltt.agenda.classes.events.EventFather
 import com.kaltt.agenda.ui.main.viewHolders.ListEventAdapter
 import kotlinx.coroutines.*
-import java.time.LocalTime
 import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity() {
@@ -40,7 +34,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, AddEventActivity::class.java))
         }
 
-        rvListEvent = findViewById<RecyclerView>(R.id.rv_list_event)
+        rvListEvent = findViewById(R.id.rv_list_event)
         rvListEvent.layoutManager = LinearLayoutManager(this)
         adapter = ListEventAdapter(V.allEvents, this)
         rvListEvent.adapter = adapter
@@ -48,7 +42,8 @@ class MainActivity : AppCompatActivity() {
         override fun onStart() {
             super.onStart()
             scope.launch {
-                MainRepository.fetchAllEvents()
+                MainRepository.fetchEvents()
+                // adapter.notifyDataSetChanged()
             }
         }
 }

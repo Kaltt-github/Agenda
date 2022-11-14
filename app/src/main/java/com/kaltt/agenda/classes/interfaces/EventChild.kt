@@ -1,10 +1,14 @@
-package com.kaltt.agenda.classes.events
+package com.kaltt.agenda.classes.interfaces
 
 import com.kaltt.agenda.classes.Difference
 import com.kaltt.agenda.classes.Tag
 import com.kaltt.agenda.classes.Task
 import com.kaltt.agenda.classes.enums.FromType
 import com.kaltt.agenda.classes.enums.ScheduleType
+import com.kaltt.agenda.classes.events.EventAnticipation
+import com.kaltt.agenda.classes.events.EventPosposition
+import com.kaltt.agenda.classes.events.EventReminder
+import com.kaltt.agenda.classes.events.EventRepeat
 import java.time.LocalDateTime
 
 interface EventChild : Event {

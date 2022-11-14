@@ -1,11 +1,7 @@
 package com.kaltt.agenda.apis
 
-import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import com.kaltt.agenda.apis.dataClasses.DataUser
-import com.kaltt.agenda.classes.enums.FromType
-import com.kaltt.agenda.classes.events.EventFather
+import com.kaltt.agenda.classes.*
 import kotlinx.coroutines.tasks.await
 
 class FirestoreAPI private constructor() {
@@ -27,33 +23,15 @@ class FirestoreAPI private constructor() {
     fun setUser(user: DataUser) {
         fsAPI.collection("users").document(user.email).set(user)
     }
-    suspend fun getUsers(): ArrayList<Map<String, String>> {
-        var r = ArrayList<Map<String, String>>()
-        fsAPI.collection("users").get().addOnSuccessListener {
-            var x = it.documents.map { d -> d.data }
-            r = x as ArrayList<Map<String, String>>
-        }
-        return r
-    }
-    suspend fun getOwnedEvents(email: String): ArrayList<EventFather> {
-        return Factory.mapsToEvents(
-            FromType.OWNED,
-            fsAPI.collection("events")
-            .whereEqualTo("owner",email)
-            .get().await()
-            .documents.map { it.data }
-        )
-    }
+    suspend fun getUsers() {}
+    suspend fun getTags() {}
+    suspend fun getEvents(email: String): List<Map<String, Any>> = fsAPI
+        .collection("events")
+        .whereEqualTo("owner", email)
+            // TODO agregar shared
+        .get().await()
+        .documents.mapNotNull { it.data }
 
-    suspend fun getSharedEvents(email: String): ArrayList<EventFather> {
-        return ArrayList()
-    }
-
-    suspend fun save(s: String, x: Map<String, Any>): String {
-        return fsAPI.collection(s).add(x).await().id
-    }
-
-    fun update(s: String, id: String, x: Map<String, Any>) {
-        fsAPI.collection(s).document(id).set(x)
-    }
+    suspend fun save(collection: String, id: String, x: Map<String, Any>) = fsAPI
+        .collection(collection).document(id).set(x)
 }

@@ -2,10 +2,11 @@ package com.kaltt.agenda
 
 import com.kaltt.agenda.classes.events.*
 import com.kaltt.agenda.classes.*
+import com.kaltt.agenda.classes.interfaces.Event
 
 class V {
     companion object {
-        val successResult = 100
+        const val successResult = 100
 
         var ownedTags: ArrayList<Tag> = ArrayList()
         var sharedTags: ArrayList<Tag> = ArrayList()
@@ -43,4 +44,8 @@ class V {
 // TODO los tags se actualizan y actualiza los eventos
 // TODO conservar los completed de reminder y repeat al hacer cambios
 // TODO conservar los completed de reminder y repeat en base de datos
-
+// TODO funcionamamiento sin wifi
+// TODO aspecto de completado, expirado
+// TODO inverted booleans
+// TODO usar fecha local ultima subida, ultima bajada y comparar con nube ultima subida
+// TODO agregar los idiomas y regiones de google maps? elegir idioma

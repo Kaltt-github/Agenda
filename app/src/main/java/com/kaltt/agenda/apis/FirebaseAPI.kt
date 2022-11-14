@@ -17,16 +17,14 @@ class FirebaseAPI private constructor() {
 
     // Variables <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     private val fbAuth = FirebaseAuth.getInstance()
-    private var user: FirebaseUser?
-        get() = fbAuth.currentUser
-        private set(value) {}
+    private val user: FirebaseUser?
+        get() = this.fbAuth.currentUser
 
     // Calculated variables <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    var isSigned: Boolean
+    val isSigned: Boolean
         get() = this.user != null
-        private set(value) {}
-
+    val email: String
+        get() = user?.email ?: ""
     // Functions <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     fun signOut() = fbAuth.signOut()
-    fun email(): String = user?.email ?: ""
 }

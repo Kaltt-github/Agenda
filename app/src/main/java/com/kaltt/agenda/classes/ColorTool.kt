@@ -1,7 +1,5 @@
 package com.kaltt.agenda.classes
 
-import android.graphics.Color
-
 class ColorTool {
     private var updatingRGB: Boolean = false
     private var updatingHSB: Boolean = false
@@ -55,9 +53,7 @@ class ColorTool {
             updateRGB()
         }
     var rgb: String
-        get() {
-            return "#${toHex(red)}${toHex(green)}${toHex(blue)}"
-        }
+        get() = "#${toHex(red)}${toHex(green)}${toHex(blue)}"
         set(value) {
             updatingRGB = false
             this.red = value.substring(1,3).toInt(16).toDouble()
@@ -66,9 +62,7 @@ class ColorTool {
             updateHSB()
         }
     var hsb: List<Double>
-        get() {
-            return listOf(this.hue, this.saturation, this.bright)
-        }
+        get() = listOf(this.hue, this.saturation, this.bright)
         set(value) {
             updatingHSB = false
             this.hue = value[0]
@@ -258,14 +252,5 @@ class ColorTool {
     private fun toHex(x: Double): String {
         val s = Integer.toHexString(x.toInt())
         return if (s.length == 1) "0$s" else s
-    }
-
-    fun toInt(): Int {
-        var y= FloatArray(3)
-        y[0] = this.hue.toFloat()
-        y[1] = this.saturation.toFloat()
-        y[2] = this.bright.toFloat()
-        var x = Color.HSVToColor(y)
-        return x//this.rgb.substring(1).toInt(16)
     }
 }

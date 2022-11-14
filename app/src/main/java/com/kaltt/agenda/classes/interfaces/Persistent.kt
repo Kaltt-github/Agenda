@@ -1,4 +1,4 @@
-package com.kaltt.agenda.classes
+package com.kaltt.agenda.classes.interfaces
 
 interface Persistent {
     var id: String

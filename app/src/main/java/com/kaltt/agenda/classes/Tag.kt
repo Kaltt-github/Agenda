@@ -2,7 +2,8 @@ package com.kaltt.agenda.classes
 
 import com.kaltt.agenda.classes.enums.FromType
 import com.kaltt.agenda.classes.enums.ScheduleType
-import com.kaltt.agenda.classes.events.Event
+import com.kaltt.agenda.classes.interfaces.Event
+import com.kaltt.agenda.classes.interfaces.Persistent
 import java.time.LocalDateTime
 
 class Tag(

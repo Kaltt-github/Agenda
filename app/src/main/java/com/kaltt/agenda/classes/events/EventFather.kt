@@ -2,6 +2,7 @@ package com.kaltt.agenda.classes.events
 
 import com.kaltt.agenda.classes.*
 import com.kaltt.agenda.classes.enums.*
+import com.kaltt.agenda.classes.interfaces.Event
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -63,7 +64,7 @@ class EventFather(
         reminders.clear()
         var done = type == ScheduleType.DONT || delay == 0
         val diff = Difference.by(type, delay)
-        var i = 1;
+        var i = 1
         while(!done) {
             val r = EventReminder(this, diff.clone().multiply(i))
             r.position = i-1
@@ -88,7 +89,7 @@ class EventFather(
         var done = type == ScheduleType.DONT || delay == 0
         val diff = Difference.by(type, delay)
         val defaultLimit = LocalDateTime.now().plusYears(10)
-        var i = 1;
+        var i = 1
         while(!done) {
             val r = EventRepeat(this, diff.clone().multiply(i))
             r.position = i-1

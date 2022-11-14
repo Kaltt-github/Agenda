@@ -4,6 +4,8 @@ import com.kaltt.agenda.classes.Difference
 import com.kaltt.agenda.classes.Task
 import com.kaltt.agenda.classes.enums.EventType
 import com.kaltt.agenda.classes.enums.ScheduleType
+import com.kaltt.agenda.classes.interfaces.Event
+import com.kaltt.agenda.classes.interfaces.EventChild
 import java.time.LocalDateTime
 
 class EventRepeat(
@@ -57,7 +59,7 @@ class EventRepeat(
         reminders.clear()
         var done = type == ScheduleType.DONT || delay == 0
         val diff = Difference.by(type, delay)
-        var i = 1;
+        var i = 1
         while(!done) {
             val r = EventReminder(this, diff.clone().multiply(i))
             r.position = i-1
