@@ -14,6 +14,8 @@ class Difference(
     var minutes: Int = 0
 ) {
     companion object {
+        fun from(d: DataDateTime): Difference =
+            Difference(d.year, d.month, d.day, d.hour, d.minute)
         fun between(x: LocalDateTime, y: LocalDateTime): Difference {
             var mins = (if(x.isBefore(y)) Duration.between(x, y) else Duration.between(y, x)).toMinutes()
             val sameMonth = x.monthValue == y.monthValue
@@ -80,4 +82,6 @@ class Difference(
         return this
     }
     fun clone(): Difference = Difference(this.years, this.months, this.days, this.hours, this.minutes)
+    fun toData(): DataDateTime =
+        DataDateTime(years, months, days, hours, minutes)
 }

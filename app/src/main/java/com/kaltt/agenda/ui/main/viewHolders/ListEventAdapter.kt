@@ -3,6 +3,7 @@ package com.kaltt.agenda.ui.main.viewHolders
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +15,11 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.kaltt.agenda.R
 import com.kaltt.agenda.classes.ColorTool
-import com.kaltt.agenda.classes.Task
 import com.kaltt.agenda.classes.enums.EventType
 import com.kaltt.agenda.classes.interfaces.Event
 import java.time.LocalDateTime
 
-class ListEventAdapter(val items: ArrayList<Event>, context: Context)
+class ListEventAdapter(val items: ArrayList<Event>, context: Context, val updateView: (id: String) -> Unit)
     : RecyclerView.Adapter<ListEventAdapter.InListEventViewHolder>() {
     class InListEventViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val icon: ImageView = view.findViewById(R.id.iw_event_list_icon)
@@ -29,6 +29,7 @@ class ListEventAdapter(val items: ArrayList<Event>, context: Context)
         val endText: TextView = view.findViewById(R.id.txt_event_list_end)
         val background: ConstraintLayout = view.findViewById(R.id.cl_event_list_background)
         val tasks: LinearLayout = view.findViewById(R.id.ll_tasks_container)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InListEventViewHolder {
@@ -38,7 +39,6 @@ class ListEventAdapter(val items: ArrayList<Event>, context: Context)
 
     override fun onBindViewHolder(holder: InListEventViewHolder, position: Int) {
         val event = items[position]
-
         fun formatDateTime(fullDay: Boolean, start: LocalDateTime, end: LocalDateTime): String {
             fun twoDigits(n: Int): String = "0".repeat(2 - "$n".length)+"$n"
             fun dateFormat(date: LocalDateTime): String {
@@ -48,9 +48,9 @@ class ListEventAdapter(val items: ArrayList<Event>, context: Context)
         }
         fun setHeader() {
             if(event.eventType == EventType.FATHER) {
+                holder.fatherName.visibility = View.VISIBLE
                 holder.childName.visibility = View.GONE
                 holder.childType.visibility = View.GONE
-                holder.fatherName.visibility = View.VISIBLE
                 holder.fatherName.text = event.name
             } else {
                 holder.childName.visibility = View.VISIBLE
@@ -70,37 +70,31 @@ class ListEventAdapter(val items: ArrayList<Event>, context: Context)
         fun setTasks() {
             if(event.hasTasks()) {
                 holder.tasks.visibility = View.VISIBLE
-                while(holder.tasks.childCount > event.tasks.size) {
-                    holder.tasks.removeViewAt(holder.tasks.childCount - 1)
-                }
-                event.tasks.forEachIndexed { i, it ->
-                    val isNew = i > holder.tasks.childCount
-                    val view = if(isNew)
-                        LayoutInflater.from(holder.tasks.context).inflate(
-                            R.layout.fragment_task_in_event_in_list,
-                            holder.tasks, false
-                        )
-                        else holder.tasks.getChildAt(i)
-
-                    view.findViewById<CheckBox>(R.id.cn_task).isChecked = it.isDone
-                    view.findViewById<TextView>(R.id.txt_task_descripcion).text = it.description
-
-                    if(isNew) {
-                        holder.tasks.addView(view)
+                holder.tasks.removeAllViews()
+                event.tasks.forEach { task ->
+                    val view = LayoutInflater.from(holder.tasks.context).inflate(R.layout.fragment_task_in_event_in_list, holder.tasks, false)
+                    val ch = view.findViewById<CheckBox>(R.id.cn_task)
+                    ch.isChecked = task.isDone
+                    view.findViewById<TextView>(R.id.txt_task_descripcion).text = task.description
+                    ch.setOnClickListener {
+                        task.isDone = !task.isDone
+                        updateView(event.id)
                     }
+                    view.findViewById<ConstraintLayout>(R.id.cl_task_event_list_background)
+                        .setOnClickListener { ch.callOnClick() }
+                    holder.tasks.addView(view)
                 }
             } else {
                 holder.tasks.visibility = View.GONE
             }
         }
         fun setColors() {
-            var background = Color.parseColor(ColorTool(event.color, 75.0, 85.0).rgb)
-            var image = Color.parseColor(ColorTool(event.color, 50.0, 95.0).rgb)
-            var icon = Color.parseColor(ColorTool(event.color, 85.0, 40.0).rgb)
-            var title = Color.parseColor(ColorTool(event.color, 78.0, 14.0).rgb)
-            var time = Color.parseColor(ColorTool(event.color, 65.0, 25.0).rgb)
-            var tasks = Color.parseColor(ColorTool(event.color, 8.0, 89.0).rgb)
-
+            val background = Color.parseColor(ColorTool(event.color, 75.0, 85.0).rgb)
+            val image = Color.parseColor(ColorTool(event.color, 50.0, 95.0).rgb)
+            val icon = Color.parseColor(ColorTool(event.color, 85.0, 40.0).rgb)
+            val title = Color.parseColor(ColorTool(event.color, 78.0, 14.0).rgb)
+            val time = Color.parseColor(ColorTool(event.color, 65.0, 25.0).rgb)
+            val tasks = Color.parseColor(ColorTool(event.color, 54.0, 39.0).rgb)
             holder.background.background.setColorFilter(background, PorterDuff.Mode.SRC_ATOP)
             holder.icon.background.setColorFilter(image, PorterDuff.Mode.SRC_ATOP)
             holder.icon.setColorFilter(icon)
@@ -110,6 +104,9 @@ class ListEventAdapter(val items: ArrayList<Event>, context: Context)
             } else {
                 holder.childName.setTextColor(title)
                 holder.childType.setTextColor(title)
+            }
+            if(event.hasTasks()) {
+                holder.tasks.background.setColorFilter(tasks, PorterDuff.Mode.SRC_ATOP)
             }
             holder.endText.setTextColor(time)
         }

@@ -1,5 +1,6 @@
 package com.kaltt.agenda.classes.events
 
+import com.kaltt.agenda.V
 import com.kaltt.agenda.classes.*
 import com.kaltt.agenda.classes.enums.*
 import com.kaltt.agenda.classes.interfaces.Event
@@ -12,6 +13,62 @@ class EventFather(
     override val owner: String,
     override var tag: Tag = Tag.empty()
 ) : Event {
+
+    companion object{
+        fun from(from: FromType, data: DataEventFather): EventFather {
+            val e = EventFather(from, data.owner)
+            e.name = data.name
+            e.description = data.description
+            e.tag = V.getInstance().allTags.find { it.id == data.tag } ?: Tag.empty()
+            e.id = data.id
+            e.icon = data.icon
+            e.color = data.color
+            e.priority = data.priority
+            e.tasks.clear()
+            data.tasks.sortBy { it.position }
+            e.tasks = ArrayList(data.tasks.map { Task.from(e, it) })
+            e.location = data.location
+            e.isComplete = data.isComplete
+            e.isFullDay = data.isFullDay
+            e.start = data.start.toLocalDateTime()
+            e.end = data.end.toLocalDateTime()
+            data.anticipations.map { }
+            e.anticipations = ArrayList( data.anticipations.map { EventAnticipation.from(e, it) })
+            e.pospositionDaysLimit = data.pospositionDaysLimit
+            e.posposed = data.posposed
+            e.setReminders(
+                ScheduleType.from(data.reminderType),
+                data.remidnerDelay
+            )
+            e.setRepetitions(
+                ScheduleType.from(data.repeatType),
+                data.repeatDelay,
+                if(!Difference.from(data.repeatLimit).isEmpty()) {
+                    data.repeatLimit.toLocalDateTime()
+                } else { null }
+            )
+            e.sharedWith = data.sharedWith
+            e.isLazy = data.isLazy
+            return e
+        }
+        fun from(it: DataEventGoogle): EventFather {
+            fun extract(s: String): LocalDateTime {
+                var a = s.split("-").map { it.toInt() }
+                return LocalDateTime.of(a[0],a[1],a[2],0,0)
+            }
+
+                var e = EventFather(FromType.GOOGLE, "Google")
+                e.id = it.id
+                e.name = it.name
+                e.description = it.description
+                e.start = extract(it.start.date)
+                e.end = extract(it.end.date)
+                e.pospositionDaysLimit = 0
+                e.isFullDay = true
+            return e
+        }
+    }
+
     override val eventType: EventType = EventType.FATHER
     override val father = this
     override var id: String = ""
@@ -147,4 +204,97 @@ class EventFather(
         }
         return e
     }
+    override fun toData(): DataEventFather = DataEventFather(
+        owner,
+        id,
+        name,
+        description,
+        tag.id,
+        icon,
+        color,
+        priority,
+        isLazy,
+        ArrayList(tasks.map { DataTask(it.position, it.description, it.isDone) }),
+        location,
+        isComplete,
+        isFullDay,
+        DataDateTime.from(start),
+        DataDateTime.from(end),
+        ArrayList(anticipations.map { DataEventAnticipation(it.localComplete, it.fatherDifference.toData()) }),
+        pospositionDaysLimit,
+        posposed,
+        reminderType.toString(),
+        reminderDelay,
+        repeatType.toString(),
+        repeatDelay,
+        DataDateTime.from(repeatLimit),
+        sharedWith
+    )
+    private fun asEventAnticipation(d: DataEventAnticipation): EventAnticipation {
+        val a = EventAnticipation(this, Difference.from(d.date))
+        if(d.isDone) {
+            a.isComplete = true
+        }
+        return a
+    }
+    override fun toMap(): Map<String, Any> =
+        hashMapOf(
+            "owner" to owner,
+            "id" to id,
+            "name" to name,
+            "description" to description,
+            "tag" to tag.id,
+            "icon" to icon,
+            "color" to color,
+            "priority" to priority,
+            "isLazy" to isLazy,
+            "tasks" to tasks.map {
+                hashMapOf(
+                    "position" to it.position,
+                    "description" to it.description,
+                    "isDone" to it.isDone
+                )
+            },
+            "location" to location,
+            "isComplete" to isComplete,
+            "isFullDay" to isFullDay,
+            "start" to hashMapOf(
+                "year" to start.year,
+                "month" to start.monthValue+1,
+                "day" to start.dayOfMonth,
+                "hour" to start.hour,
+                "minute" to start.minute
+            ),
+            "end" to hashMapOf(
+                "year" to end.year,
+                "month" to end.monthValue+1,
+                "day" to end.dayOfMonth,
+                "hour" to end.hour,
+                "minute" to end.minute,
+            ),
+            "anticipations" to anticipations.map {
+                hashMapOf(
+                    "year" to it.fatherDifference.years,
+                    "month" to it.fatherDifference.months,
+                    "day" to it.fatherDifference.days,
+                    "hour" to it.fatherDifference.hours,
+                    "minute" to it.fatherDifference.minutes,
+                    "isDone" to it.localComplete
+                )
+            },
+            "pospositionDaysLimit" to pospositionDaysLimit,
+            "posposed" to posposed,
+            "reminderType" to reminderType,
+            "reminderDelay" to reminderDelay,
+            "repeatType" to repeatType.toString(),
+            "repeatDelay" to repeatDelay,
+            "repeatLimit" to hashMapOf(
+                "year" to (repeatLimit?.year ?: 0),
+                "month" to (repeatLimit?.monthValue ?: -1 )+1,
+                "day" to (repeatLimit?.dayOfMonth ?: 0),
+                "hour" to (repeatLimit?.hour ?: 0),
+                "minute" to (repeatLimit?.minute ?: 0)
+            ),
+            "sharedWith" to sharedWith
+        )
 }

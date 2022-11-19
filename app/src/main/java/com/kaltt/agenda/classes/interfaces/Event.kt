@@ -1,5 +1,6 @@
 package com.kaltt.agenda.classes.interfaces
 
+import com.kaltt.agenda.classes.DataEventFather
 import com.kaltt.agenda.classes.Difference
 import com.kaltt.agenda.classes.Tag
 import com.kaltt.agenda.classes.Task
@@ -79,4 +80,7 @@ interface Event: Persistent {
     fun isLastAnticipation(): Boolean = false
     fun isLastReminder(): Boolean = false
     fun isLastPosposition(): Boolean = false
+
+    fun toData(): DataEventFather
+    fun toMap(): Map<String, Any>
 }

@@ -1,5 +1,6 @@
 package com.kaltt.agenda.classes.interfaces
 
+import com.kaltt.agenda.classes.DataEventFather
 import com.kaltt.agenda.classes.Difference
 import com.kaltt.agenda.classes.Tag
 import com.kaltt.agenda.classes.Task
@@ -117,4 +118,6 @@ interface EventChild : Event {
     override fun isLastAnticipation(): Boolean = isAnticipation() && this.position + 1 == this.anticipations.size
     override fun isLastReminder(): Boolean = isReminder() && this.position + 1 == this.reminders.size
     override fun isLastPosposition(): Boolean = isPosposition() && this.father.posposed == this.father.pospositionDaysLimit
+    override fun toData(): DataEventFather = this.father.toData()
+    override fun toMap(): Map<String, Any> = this.father.toMap()
 }

@@ -7,5 +7,25 @@ enum class ScheduleType {
     DAYS,
     WEEKS,
     MONTHS,
-    YEARS
+    YEARS;
+    companion object {
+        fun from(s: String): ScheduleType = when(s) {
+            "MINUTES" -> MINUTES
+            "HOURS" -> HOURS
+            "DAYS" -> DAYS
+            "WEEKS" -> WEEKS
+            "MONTHS" -> MONTHS
+            "YEARS" -> YEARS
+            else -> DONT
+        }
+    }
+    override fun toString(): String = when(this) {
+        MINUTES -> "MINUTES"
+        HOURS -> "HOURS"
+        DAYS -> "DAYS"
+        WEEKS -> "WEEKS"
+        MONTHS -> "MONTHS"
+        YEARS -> "YEARS"
+        DONT -> "DONT"
+    }
 }

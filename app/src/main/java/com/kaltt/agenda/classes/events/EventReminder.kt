@@ -1,6 +1,7 @@
 package com.kaltt.agenda.classes.events
 
 import com.kaltt.agenda.classes.Difference
+import com.kaltt.agenda.classes.Task
 import com.kaltt.agenda.classes.enums.EventType
 import com.kaltt.agenda.classes.interfaces.Event
 import com.kaltt.agenda.classes.interfaces.EventChild
@@ -18,4 +19,6 @@ class EventReminder(
     override var end: LocalDateTime
         get() = if(this.isLastReminder()) this.father.end else this.father.reminders[this.position+1].start
         set(value) {}
+
+    override fun hasTasks(): Boolean = false
 }

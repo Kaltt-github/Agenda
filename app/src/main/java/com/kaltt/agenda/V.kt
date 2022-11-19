@@ -4,37 +4,56 @@ import com.kaltt.agenda.classes.events.*
 import com.kaltt.agenda.classes.*
 import com.kaltt.agenda.classes.interfaces.Event
 
-class V {
+class V private constructor() {
     companion object {
-        const val successResult = 100
+        const val successResult = 200
+        private var instance: V? = null
 
-        var ownedTags: ArrayList<Tag> = ArrayList()
-        var sharedTags: ArrayList<Tag> = ArrayList()
-
-        val allTags: ArrayList<Tag>
-            get() {
-                var result = ArrayList<Tag>()
-                result.addAll(ownedTags)
-                result.addAll(sharedTags)
-                return result
+        fun getInstance(): V {
+            if(instance == null) {
+                instance = V()
             }
-
-        var sharedEvents: ArrayList<EventFather> = ArrayList()
-        var ownedEvents: ArrayList<EventFather> = ArrayList()
-        var googleEvents: ArrayList<EventFather> = ArrayList()
-
-        val allEvents: ArrayList<Event>
-            get() {
-                val result = ArrayList<Event>()
-                sharedEvents.forEach { result.addAll(it.selfWithChildren())}
-                ownedEvents.forEach { result.addAll(it.selfWithChildren())}
-                googleEvents.forEach { result.addAll(it.selfWithChildren())}
-                result.sortBy { it.start }
-                return result
-            }
+            return instance!!
+        }
     }
-}
+    var ownedTags: ArrayList<Tag> = ArrayList()
+    var sharedTags: ArrayList<Tag> = ArrayList()
+    val allTags: ArrayList<Tag> = ArrayList()
 
+    var sharedEvents: ArrayList<EventFather> = ArrayList()
+        set(value) {
+            val ids = value.map { it.id }
+            allEvents.removeIf { ids.contains(it.id) }
+            field = value
+            value.forEach {
+                allEvents.addAll(it.selfWithChildren())
+            }
+            allEvents.sortBy { it.start }
+        }
+    var ownedEvents: ArrayList<EventFather> = ArrayList()
+        set(value) {
+            val ids = value.map { it.id }
+            allEvents.removeIf { ids.contains(it.id) }
+            field = value
+            value.forEach {
+                allEvents.addAll(it.selfWithChildren())
+            }
+            allEvents.sortBy { it.start }
+        }
+    var googleEvents: ArrayList<EventFather> = ArrayList()
+        set(value) {
+            val ids = value.map { it.id }
+            allEvents.removeIf { ids.contains(it.id) }
+            field = value
+            value.forEach {
+                allEvents.addAll(it.selfWithChildren())
+            }
+            allEvents.sortBy { it.start }
+        }
+    val allEvents: ArrayList<Event> = ArrayList()
+
+}
+// TODO pasar los conversores de ClassAdapter a cada objeto
 // TODO pedir eventos de Calendar (solicitar pais e idioma)
 // TODO animacion de deslizar a los lados
 // TODO compartir eventos
